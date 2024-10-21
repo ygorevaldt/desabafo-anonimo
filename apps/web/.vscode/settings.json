@@ -9,6 +9,6 @@
 		"typescriptreact",
 		"graphql"
 	],
-	"editor.detectIndentation": true,
+	"editor.detectIndentation": false,
 	"editor.insertSpaces": false
 }

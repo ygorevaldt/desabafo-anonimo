@@ -8,6 +8,7 @@ module.exports = {
   rules: {
     semi: ["error", "always"],
     quotes: ["error", "double"],
-    indent: ["error", "tab"],
+    indent: ["error", 4],
+    "no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
   }
 };
