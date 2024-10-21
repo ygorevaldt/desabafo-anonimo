@@ -5,7 +5,7 @@ export default function Home() {
 			items-center justify-center 
 			h-screen
 		">
-			<header>
+			<header className="text-center">
 				<h1 className="text-3xl font-bold">
 					Desabafe aqui, você não está sozinho.
 				</h1>
