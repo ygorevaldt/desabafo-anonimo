@@ -1,0 +1,27 @@
+{
+  "name": "desabafo-anonimo",
+  "description": "Aplicação web full-stack que oferece um espaço seguro e anônimo para as pessoas expressarem seus sentimentos. Além de poder fazer desabafos, os usuários também poderão apoiar o desabafo de outras pessoas, criando assim um ambiente de acolhimento e conforto.",
+  "author": "Ygor Evaldt",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.0.2",
+    "react": "19.0.0-rc-02c0e824-20241028",
+    "react-dom": "19.0.0-rc-02c0e824-20241028"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8",
+    "prettier": "3.3.3",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
