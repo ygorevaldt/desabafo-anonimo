@@ -1,4 +1,5 @@
 import { Istok_Web } from "next/font/google";
+import { PiHeartFill } from "react-icons/pi";
 
 const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
@@ -22,8 +23,10 @@ export default function Home() {
             ${istokWeb.className} text-zinc-600 text-lg text-center 
           `}
         >
-          Salve este site nos seus favoritos e nos visite em alguns dias, há
-          grande chances de este ser um de seus lugares preferidos na internet.
+          Estamos desenvolvendo um cantinho na internet para você acessar nos
+          momentos que precise desabafar e se sentir apoiado. Salve este
+          endereço nos favorítos do seu navegador, ele será muito valioso para
+          você no futuro. <PiHeartFill className="text-red-700 inline-block" />
         </p>
       </main>
     </article>
