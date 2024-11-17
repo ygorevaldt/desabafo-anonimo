@@ -19,6 +19,7 @@ model Vent {
   id String @id @map("id") @db.Uuid @default(uuid())
   title String @map("titulo") @db.VarChar(50)
   description String @map("descricao") @db.VarChar(2500)
+  createdAt DateTime @map("created_at") @db.Timestamp @default(now())
   supports Support[]
 
   @@map("desabafo")

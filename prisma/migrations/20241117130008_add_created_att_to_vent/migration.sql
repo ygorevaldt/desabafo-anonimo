@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "desabafo" ADD COLUMN     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
