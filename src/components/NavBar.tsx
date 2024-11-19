@@ -1,0 +1,31 @@
+import Link from "next/link";
+
+export function NavBar() {
+  return (
+    <aside className="flex items-center justify-between px-10 py-8 border-b-2 border-zinc-300">
+      <Link href={"/"}>
+        <h1 className="text-2xl font-bold hover:scale-110 duration-300">
+          Desabafo Anônimo
+        </h1>
+      </Link>
+      <ul className="flex items-center justify-end gap-4">
+        <li>
+          <Link
+            href={"/about"}
+            className="text-xl hover:text-rose-400 duration-300"
+          >
+            Sobre
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={"/vents"}
+            className="text-xl hover:text-rose-400 duration-300"
+          >
+            Desabafos
+          </Link>
+        </li>
+      </ul>
+    </aside>
+  );
+}

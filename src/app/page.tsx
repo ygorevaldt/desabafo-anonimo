@@ -1,31 +1,52 @@
+import Link from "next/link";
+import { FaFeather } from "react-icons/fa";
 import { Istok_Web } from "next/font/google";
+
+import { DinamicPage } from "@/components/DinamicPage";
 
 const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <article
-      className="
-      flex flex-col gap-8 items-center justify-center
-      max-w-6xl m-auto p-4 h-full
-    "
-    >
-      <header className="flex flex-col gap-6 text-center">
-        <h1 className="text-5xl text-rose-400">
-          Muitas vezes, só precisamos ser ouvidos
-        </h1>
-      </header>
-      <main>
-        <p
-          className={`
-            w-2/3 m-auto
-            ${istokWeb.className} text-zinc-600 text-lg text-center 
+    <DinamicPage className="flex flex-col justify-center">
+      <article className="flex flex-col gap-8">
+        <header className="flex flex-col gap-6 text-center">
+          <h1 className="text-5xl text-rose-400">
+            Muitas vezes, só precisamos ser ouvidos
+          </h1>
+        </header>
+        <main className="flex flex-col gap-12 justify-center items-center">
+          <div
+            className={`
+              flex flex-col gap-1
+              md:w-2/3 m-auto
+              ${istokWeb.className} text-zinc-600 text-lg text-center
           `}
-        >
-          Salve este site nos seus favoritos e nos visite em alguns dias, há
-          grande chances de este ser um de seus lugares preferidos na internet.
-        </p>
-      </main>
-    </article>
+          >
+            <p>
+              Este é um espaço seguro e anônimo para você se expressar, ser você
+              mesmo sem receios. Desabafe sobre seus qualquer coisa, sobre seus
+              problemas, suas angústias, seus sonhos, suas frustrações e
+              conquistas. Aqui você será ouvido e apoiado. Encontre acolhimento
+              em cada palavra compartilhada, apoio em cada história que se
+              conecta com a sua. Desabafe, se expresse, se liberte.
+            </p>
+          </div>
+          <Link
+            href={"/unburden"}
+            className="
+            flex items-center gap-3
+            bg-gradient-to-r from-rose-500 to-rose-300 text-white shadow-md
+           rounded-3xl
+            px-8 py-4 text-xl
+            hover:bg-rose-400 hover:animate-pulse hover:scale-105 duration-300
+            active:scale-95
+          "
+          >
+            Desabafar <FaFeather />
+          </Link>
+        </main>
+      </article>
+    </DinamicPage>
   );
 }
