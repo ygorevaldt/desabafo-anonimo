@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { HttpStatusCode } from "@/app/api/constants/http-status-code";
+import { FetchApiStatus } from "../../use-cases/fetch-api-status.usecase";
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const fetchApiStatusUseCase = new FetchApiStatus();
+  const { updatedAt, database } = await fetchApiStatusUseCase.execute();
+
   return NextResponse.json({
-    status: HttpStatusCode.OK,
-    mensagem: "Serviço online",
+    updated_at: updatedAt,
+    database: {
+      version: database.version,
+      max_connections: database.maxConnections,
+      opened_connections: database.openedConnections,
+    },
   });
 }
