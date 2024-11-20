@@ -3,7 +3,7 @@ import { UnburdenForm } from "@/components/UnburdenForm";
 
 export default function Unburden() {
   return (
-    <DinamicPage>
+    <DinamicPage className="p-10">
       <UnburdenForm />
     </DinamicPage>
   );

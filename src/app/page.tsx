@@ -8,7 +8,7 @@ const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <DinamicPage className="flex flex-col justify-center">
+    <DinamicPage className="flex flex-col justify-center py-10">
       <article className="flex flex-col gap-8">
         <header className="flex flex-col gap-6 text-center">
           <h1 className="text-5xl text-rose-400">
@@ -35,11 +35,13 @@ export default function Home() {
           <Link
             href={"/unburden"}
             className="
+            rose-button
             flex items-center gap-3
-            bg-gradient-to-r from-rose-500 to-rose-300 text-white shadow-md
-           rounded-3xl
-            px-8 py-4 text-xl
-            hover:bg-rose-400 hover:animate-pulse hover:scale-105 duration-300
+            bg-gradient-to-r from-rose-500 to-rose-300 
+            px-8 py-4
+            rounded-3xl shadow-md
+            text-xl text-white 
+            hover:animate-pulse
             active:scale-95
           "
           >

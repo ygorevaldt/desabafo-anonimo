@@ -2,16 +2,16 @@ import axios from "axios";
 import { headers } from "next/headers";
 import { describe, expect, it } from "vitest";
 
-describe("vent", () => {
-  it.skip("should register a new vent", async () => {
-    const vent = {
+describe("unburden", () => {
+  it.skip("should register a new unburden", async () => {
+    const unburden = {
       title: "Teste",
       description: "Desabafo de teste",
     };
 
     const response = await axios.post(
-      "http://localhost:3000/api/v1/vent",
-      vent,
+      "http://localhost:3000/api/v1/unburden",
+      unburden,
       {
         headers: {
           "Content-Type": "application/json",

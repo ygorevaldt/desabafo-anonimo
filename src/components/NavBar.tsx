@@ -10,18 +10,12 @@ export function NavBar() {
       </Link>
       <ul className="flex items-center justify-end gap-4">
         <li>
-          <Link
-            href={"/about"}
-            className="text-xl hover:text-rose-400 duration-300"
-          >
+          <Link href={"/about"} className="nav-link">
             Sobre
           </Link>
         </li>
         <li>
-          <Link
-            href={"/vents"}
-            className="text-xl hover:text-rose-400 duration-300"
-          >
+          <Link href={"/unburdens"} className="nav-link">
             Desabafos
           </Link>
         </li>

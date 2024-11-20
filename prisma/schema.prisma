@@ -9,13 +9,13 @@ datasource db {
 
 model Support {
   id String @id @map("id") @db.Uuid @default(uuid())
-  ventId String @map("id_desabafo") @db.Uuid
-  vent Vent @relation(fields: [ventId], references: [id])
+  unburdenId String @map("id_desabafo") @db.Uuid
+  unburden Unburden @relation(fields: [unburdenId], references: [id])
 
   @@map("apoio")
 }
 
-model Vent {
+model Unburden {
   id String @id @map("id") @db.Uuid @default(uuid())
   title String @map("titulo") @db.VarChar(50)
   description String @map("descricao") @db.VarChar(2500)

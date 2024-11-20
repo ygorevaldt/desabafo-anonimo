@@ -19,3 +19,18 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .spinner-border {
+    @apply border-t-rose-500 border-r-transparent border-b-transparent border-l-rose-500;
+  }
+
+  .nav-link {
+    @apply text-xl hover:text-rose-400 duration-300;
+  }
+
+  .rose-button {
+    @apply bg-rose-500 duration-300 px-6 py-2 rounded-xl text-white;
+    @apply hover:bg-rose-400 hover:scale-105;
+  }
+}
