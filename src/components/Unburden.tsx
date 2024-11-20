@@ -10,7 +10,7 @@ export function Unburden({ data }: UnburdenProps) {
       <h1 className="text-lg font-bold"> # {data.title}</h1>
       <p>{data.description}</p>
       <div className="flex justify-end">
-        <button className="rose-button">Apoiar</button>
+        <button>Apoiar</button>
       </div>
     </div>
   );

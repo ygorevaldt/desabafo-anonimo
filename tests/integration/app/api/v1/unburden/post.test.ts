@@ -1,16 +1,21 @@
+import { database } from "@/app/api/infra/database";
 import axios from "axios";
 import { headers } from "next/headers";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 describe("unburden", () => {
-  it.skip("should register a new unburden", async () => {
+  beforeEach(async () => {
+    await database.unburden.deleteMany();
+  });
+
+  it("should register a new unburden", async () => {
     const unburden = {
       title: "Teste",
       description: "Desabafo de teste",
     };
 
     const response = await axios.post(
-      "http://localhost:3000/api/v1/unburden",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
       unburden,
       {
         headers: {

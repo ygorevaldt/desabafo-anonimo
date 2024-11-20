@@ -1,6 +1,5 @@
 import { Unburden } from "@prisma/client";
 import { IUseCase } from "./use-case.interface";
-import { database } from "../infra/database";
 import { IUnburdenRepository } from "../repositories/unburden/unburden-repository.interface";
 
 type Output = {
