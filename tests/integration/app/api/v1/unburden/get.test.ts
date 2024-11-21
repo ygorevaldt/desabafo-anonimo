@@ -4,6 +4,7 @@ import { describe, expect, it, beforeEach } from "vitest";
 
 describe("unburden", () => {
   beforeEach(async () => {
+    await database.support.deleteMany();
     await database.unburden.deleteMany();
   });
 
@@ -22,7 +23,6 @@ describe("unburden", () => {
     ]);
 
     const { status, data } = await axios.get(`${baseUrl}/api/v1/unburden`);
-    console.log("data", data.unburdens[0]._count);
 
     expect(status).toEqual(HttpStatusCode.Ok);
     expect(data).toHaveProperty("unburdens");

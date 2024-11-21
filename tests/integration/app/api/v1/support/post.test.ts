@@ -9,7 +9,7 @@ describe("support", () => {
     await database.unburden.deleteMany();
   });
 
-  it.only("should register a new support to existing unburden", async () => {
+  it("should register a new support to existing unburden", async () => {
     const createUnburdenResponse = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
       {

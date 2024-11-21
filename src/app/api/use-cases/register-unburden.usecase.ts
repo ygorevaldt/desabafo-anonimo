@@ -7,7 +7,7 @@ import {
 
 type Input = {
   title: string;
-  description: string;
+  content: string;
 };
 
 type Output = {
@@ -18,6 +18,7 @@ export class RegisterUnburdenUseCase implements IUseCase<Input, Output> {
   constructor(private unburdenRepository: IUnburdenRepository) {}
 
   async execute(data: Input): Promise<Output> {
+    console.log("data", data);
     const unburden = await this.unburdenRepository.create(data);
     return { unburden };
   }
