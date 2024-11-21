@@ -7,8 +7,9 @@ export async function POST(request: NextRequest) {
   const registerUnburdenUseCase = makeRegisterUnburdenUseCase();
 
   try {
-    const { content } = await request.json();
+    const { title, content } = await request.json();
     const { unburden } = await registerUnburdenUseCase.execute({
+      title,
       description: content,
     });
 

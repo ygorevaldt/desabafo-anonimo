@@ -1,6 +1,7 @@
 import { database } from "@/app/api/infra/database";
 import axios from "axios";
 import { headers } from "next/headers";
+import { title } from "process";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("unburden", () => {
@@ -10,8 +11,8 @@ describe("unburden", () => {
 
   it("should register a new unburden", async () => {
     const unburden = {
-      title: "Teste",
-      description: "Desabafo de teste",
+      title: "Desabafo",
+      content: "Este é apenas um desabado sincero",
     };
 
     const response = await axios.post(

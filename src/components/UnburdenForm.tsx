@@ -7,7 +7,10 @@ import { resolve } from "path";
 
 export function UnburdenForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [unburden, setUnburden] = useState("");
+  const [unburden, setUnburden] = useState<{ title: string; content: string }>({
+    title: "",
+    content: "",
+  });
 
   async function handleSubmitUnburden(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -16,12 +19,15 @@ export function UnburdenForm() {
     try {
       if (!unburden) return;
 
-      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`, {
-        title: "Teste",
-        description: unburden,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
+        unburden,
+      );
 
-      setUnburden("");
+      setUnburden({
+        title: "",
+        content: "",
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -29,8 +35,16 @@ export function UnburdenForm() {
     }
   }
 
-  function handleNewUnburdenValue(event: ChangeEvent<HTMLTextAreaElement>) {
-    setUnburden(event.target.value);
+  function handleNewTitleValue(event: ChangeEvent<HTMLInputElement>) {
+    setUnburden((currentState) => {
+      return { ...currentState, title: event.target.value };
+    });
+  }
+
+  function handleNewContentValue(event: ChangeEvent<HTMLTextAreaElement>) {
+    setUnburden((currentState) => {
+      return { ...currentState, content: event.target.value };
+    });
   }
 
   return (
@@ -49,6 +63,19 @@ export function UnburdenForm() {
               informações pessoais sensíveis.
             </p>
           </header>
+          <input
+            className="
+              p-2 border-2 border-zinc-300 rounded-lg
+              focus:outline-none focus:shadow-md
+            "
+            type="text"
+            placeholder="Dígite o título para seu desabafo"
+            value={unburden.title}
+            onChange={handleNewTitleValue}
+            required
+            maxLength={50}
+            minLength={5}
+          />
           <textarea
             className="
               m-auto p-2 w-full
@@ -57,9 +84,11 @@ export function UnburdenForm() {
             "
             rows={15}
             placeholder="Escreva seu desabafo aqui:"
-            value={unburden}
-            onChange={handleNewUnburdenValue}
+            value={unburden.content}
+            onChange={handleNewContentValue}
             required
+            maxLength={2500}
+            minLength={25}
           ></textarea>
         </section>
         <button type="submit" className="rose-button ">

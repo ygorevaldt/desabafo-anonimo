@@ -28,7 +28,7 @@ export default function Unburdens() {
 
   return (
     <>
-      <DinamicPage className="flex flex-col gap-4 py-10">
+      <DinamicPage className="flex flex-col gap-4">
         <header>
           <h1 className="text-xl font-semibold">Desabafos</h1>
         </header>

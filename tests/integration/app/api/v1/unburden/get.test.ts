@@ -8,17 +8,16 @@ describe("unburden", () => {
   });
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  console.log(process.env);
 
   it("should fetch a list of unburdens", async () => {
     await Promise.all([
       axios.post(`${baseUrl}/api/v1/unburden`, {
         title: "Desabafo 1",
-        description: "Conteúdo do desabafo 2",
+        content: "Este é apenas um desabafo sincero 1",
       }),
       axios.post(`${baseUrl}/api/v1/unburden`, {
         title: "Desabafo 2",
-        description: "Conteúdo do desabafo 2",
+        content: "Este é apenas um desabafo sincero 2",
       }),
     ]);
 
