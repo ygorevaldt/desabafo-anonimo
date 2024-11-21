@@ -5,7 +5,6 @@ import { IUnburdenRepository } from "../repositories/unburden/unburden-repositor
 import { gemini } from "@/app/api/infra/gemini";
 
 type Input = {
-  title: string;
   description: string;
 };
 
