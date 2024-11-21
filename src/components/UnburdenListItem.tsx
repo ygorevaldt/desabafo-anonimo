@@ -5,6 +5,8 @@ import { SupportButton } from "./SupportButton";
 import { useState } from "react";
 import axios from "axios";
 import { Loading } from "./Loading";
+import { Time } from "./Time";
+import { SupportsAmount } from "./SupportsAmount";
 
 type UnburdenProps = {
   unburden: UnburdenType;
@@ -32,31 +34,26 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
     <li>
       <div
         className="
-        flex flex-col gap-2
+        flex flex-col gap-4
         border-2 border-zinc-300 
         rounded-lg p-4 pb-1
         hover:shadow-md duration-300
       "
       >
-        <h1 className="text-xl font-bold text-rose-500 flex items-center gap-1">
-          {<FaHashtag />} {unburden.title}
-        </h1>
+        <div className="flex justify-between items-start">
+          <h1 className="text-xl font-bold text-rose-500 flex items-center gap-1 pt-4">
+            {<FaHashtag />} {unburden.title}
+          </h1>
+          <Time
+            publishedAt={new Date(unburden.created_at)}
+            className="text-zinc-400 text-xs"
+          />
+        </div>
         <p className="px-1 whitespace-pre-wrap">{unburden.content}</p>
-        <>
-          {unburden.supports_amount === 0 ? (
-            <p className="text-xs text-end text-zinc-500 mt-2">
-              Seja o primeiro a demonstrar apoio
-            </p>
-          ) : (
-            <p className="text-xs text-end text-zinc-500 mt-2">
-              <span className="text-sm">{unburden.supports_amount} </span>
-              {unburden.supports_amount === 1
-                ? "demonstração"
-                : "demostrações"}{" "}
-              de apoio
-            </p>
-          )}
-        </>
+        <SupportsAmount
+          amount={unburden.supports_amount}
+          className="text-xs text-end text-zinc-400 mt-2"
+        />
       </div>
       <div className="flex justify-end mt-2">
         <SupportButton registerSupport={handleRegisterSupport} />
