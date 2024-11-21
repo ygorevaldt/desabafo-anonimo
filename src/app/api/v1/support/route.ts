@@ -1,5 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
-
 import { makeRegisterSupportUseCase } from "@/app/api/use-cases/factories/make-register-support-use-case";
 import { SupportResponseDto } from "../dtos/support-response.dto";
 import { HttpStatusCode } from "../../constants/http-status-code";
