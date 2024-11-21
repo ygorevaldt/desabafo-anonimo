@@ -7,22 +7,24 @@ import axios from "axios";
 import { Loading } from "./Loading";
 
 type UnburdenProps = {
-  data: UnburdenType;
+  unburden: UnburdenType;
 };
 
-export function UnburdenListItem({ data }: UnburdenProps) {
-  const [isLoading, setIsLoading] = useState(false);
+export function UnburdenListItem({ unburden }: UnburdenProps) {
+  const [data, setData] = useState(unburden);
 
   async function handleRegisterSupport() {
-    setIsLoading(true);
-
     try {
-      await axios.post("/api/v1/support", { unburdenId: data.id });
-      data.supports_amount += 1;
+      await axios.post("/api/v1/support", { unburdenId: unburden.id });
+      setData((currentState) => {
+        return {
+          ...currentState,
+          supports_amount: currentState.supports_amount + 1,
+        };
+      });
+      unburden.supports_amount += 1;
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -37,19 +39,21 @@ export function UnburdenListItem({ data }: UnburdenProps) {
       "
       >
         <h1 className="text-xl font-bold text-rose-500 flex items-center gap-1">
-          {<FaHashtag />} {data.title}
+          {<FaHashtag />} {unburden.title}
         </h1>
-        <p className="px-1">{data.content}</p>
+        <p className="px-1">{unburden.content}</p>
         <>
-          {data.supports_amount === 0 ? (
+          {unburden.supports_amount === 0 ? (
             <p className="text-xs text-end text-zinc-500 mt-2">
               Seja o primeiro a demonstrar apoio
             </p>
           ) : (
             <p className="text-xs text-end text-zinc-500 mt-2">
-              <span className="text-sm">{data.supports_amount} </span>
-              {data.supports_amount === 1 ? "demonstração" : "demostrações"} de
-              apoio
+              <span className="text-sm">{unburden.supports_amount} </span>
+              {unburden.supports_amount === 1
+                ? "demonstração"
+                : "demostrações"}{" "}
+              de apoio
             </p>
           )}
         </>
@@ -57,7 +61,6 @@ export function UnburdenListItem({ data }: UnburdenProps) {
       <div className="flex justify-end mt-2">
         <SupportButton registerSupport={handleRegisterSupport} />
       </div>
-      {isLoading && <Loading />}
     </li>
   );
 }

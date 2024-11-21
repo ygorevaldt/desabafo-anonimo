@@ -30,7 +30,7 @@ export function UnburdenList() {
       {unburdens[0] ? (
         <ul className="flex flex-col gap-3">
           {unburdens.map((unburden) => {
-            return <UnburdenListItem data={unburden} key={unburden.id} />;
+            return <UnburdenListItem unburden={unburden} key={unburden.id} />;
           })}
         </ul>
       ) : (
