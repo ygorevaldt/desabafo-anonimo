@@ -29,6 +29,19 @@ body {
     @apply text-xl hover:text-rose-400 duration-300;
   }
 
+  .nav-link.active {
+    @apply font-bold border-b-2 border-b-black;
+  }
+
+  .special-rose-button {
+    @apply px-2 py-1 border-2 rounded-lg text-black;
+    @apply hover:text-white;
+    @apply hover:animate-pulse hover:scale-105;
+    @apply hover:bg-gradient-to-r from-rose-500 to-rose-300 hover:border-white;
+    @apply active:scale-95;
+    @apply duration-200;
+  }
+
   .rose-button {
     @apply bg-rose-500 duration-300 px-6 py-2 rounded-xl text-white;
     @apply hover:bg-rose-400 hover:scale-105;

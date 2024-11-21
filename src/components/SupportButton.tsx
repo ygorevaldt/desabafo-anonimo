@@ -1,5 +1,4 @@
-import supportSvg from "@/assets/support.svg";
-console.log("suportSVG", supportSvg);
+import { PiHandHeartThin } from "react-icons/pi";
 
 export function SupportButton() {
   function handleSupportUnburden() {
@@ -10,13 +9,16 @@ export function SupportButton() {
     <button
       title="Apoiar"
       className="
-        border-2 border-transparent rounded-full
-        hover:border-rose-400 
-        duration-300
+        group
+        special-rose-button 
+        flex items-center gap-2
       "
       onClick={handleSupportUnburden}
     >
-      <img width={30} src={supportSvg.src} alt="Apoio" />
+      <span className="text-red-500 group-hover:text-white duration-300">
+        <PiHandHeartThin size={25} />
+      </span>
+      Apoiar
     </button>
   );
 }
