@@ -25,11 +25,11 @@ export default function Home() {
           >
             <p>
               Este é um espaço seguro e anônimo para você se expressar, ser você
-              mesmo sem receios. Desabafe sobre seus qualquer coisa, sobre seus
-              problemas, suas angústias, seus sonhos, suas frustrações e
-              conquistas. Aqui você será ouvido e apoiado. Encontre acolhimento
-              em cada palavra compartilhada, apoio em cada história que se
-              conecta com a sua. Desabafe, se expresse, se liberte.
+              mesmo sem receios. Desabafe sobre qualquer coisa, seus problemas,
+              suas angústias, seus sonhos, suas frustrações e conquistas. Aqui
+              você será ouvido e apoiado. Encontre acolhimento em cada palavra
+              compartilhada, apoio em cada história que se conecta com a sua.
+              Desabafe, se expresse, se liberte.
             </p>
           </div>
           <Link
