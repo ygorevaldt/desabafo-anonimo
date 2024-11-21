@@ -2,12 +2,30 @@ import { FaHashtag } from "react-icons/fa";
 
 import { UnburdenType } from "@/types/unburden.type";
 import { SupportButton } from "./SupportButton";
+import { useState } from "react";
+import axios from "axios";
+import { Loading } from "./Loading";
 
 type UnburdenProps = {
   data: UnburdenType;
 };
 
 export function UnburdenListItem({ data }: UnburdenProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleRegisterSupport() {
+    setIsLoading(true);
+
+    try {
+      await axios.post("/api/v1/support", { unburdenId: data.id });
+      data.supports_amount += 1;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <li>
       <div
@@ -29,7 +47,7 @@ export function UnburdenListItem({ data }: UnburdenProps) {
             </p>
           ) : (
             <p className="text-xs text-end text-zinc-500 mt-2">
-              {data.supports_amount}{" "}
+              <span className="text-sm">{data.supports_amount} </span>
               {data.supports_amount === 1 ? "demonstração" : "demostrações"} de
               apoio
             </p>
@@ -37,8 +55,9 @@ export function UnburdenListItem({ data }: UnburdenProps) {
         </>
       </div>
       <div className="flex justify-end mt-2">
-        <SupportButton />
+        <SupportButton registerSupport={handleRegisterSupport} />
       </div>
+      {isLoading && <Loading />}
     </li>
   );
 }
