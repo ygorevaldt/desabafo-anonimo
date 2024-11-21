@@ -3,7 +3,6 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Loading } from "./Loading";
-import { resolve } from "path";
 
 export function UnburdenForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,8 +41,10 @@ export function UnburdenForm() {
   }
 
   function handleNewContentValue(event: ChangeEvent<HTMLTextAreaElement>) {
+    const contentWithLineBreaks = event.target.value.replace(/\n/g, "\r\n");
+
     setUnburden((currentState) => {
-      return { ...currentState, content: event.target.value };
+      return { ...currentState, content: contentWithLineBreaks };
     });
   }
 

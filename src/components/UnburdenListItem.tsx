@@ -41,7 +41,7 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         <h1 className="text-xl font-bold text-rose-500 flex items-center gap-1">
           {<FaHashtag />} {unburden.title}
         </h1>
-        <p className="px-1">{unburden.content}</p>
+        <p className="px-1 whitespace-pre-wrap">{unburden.content}</p>
         <>
           {unburden.supports_amount === 0 ? (
             <p className="text-xs text-end text-zinc-500 mt-2">
