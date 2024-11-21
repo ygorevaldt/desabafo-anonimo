@@ -6,10 +6,6 @@ type SupportButtonProps = {
 };
 
 export function SupportButton({ registerSupport }: SupportButtonProps) {
-  function handleSupportUnburden() {
-    console.log("Desabafo apoiado");
-  }
-
   return (
     <button
       title="Apoiar"
