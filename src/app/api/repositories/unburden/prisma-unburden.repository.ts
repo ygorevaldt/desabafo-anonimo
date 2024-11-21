@@ -21,6 +21,9 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
           select: { supports: true },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return unburdens.map((unburden) => {
