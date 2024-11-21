@@ -1,9 +1,11 @@
-import { Unburden } from "@prisma/client";
 import { IUseCase } from "./use-case.interface";
-import { IUnburdenRepository } from "../repositories/unburden/unburden-repository.interface";
+import {
+  IUnburdenRepository,
+  UnburdenWithSupports,
+} from "../repositories/unburden/unburden-repository.interface";
 
 type Output = {
-  unburdens: Unburden[];
+  unburdens: UnburdenWithSupports[];
 };
 
 export class ListUnburdensUseCase implements IUseCase<void, Output> {

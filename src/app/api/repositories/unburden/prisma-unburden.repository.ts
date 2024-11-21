@@ -1,16 +1,30 @@
 import { Prisma, Unburden } from "@prisma/client";
-import { IUnburdenRepository } from "./unburden-repository.interface";
+import {
+  IUnburdenRepository,
+  UnburdenWithSupports,
+} from "./unburden-repository.interface";
 
 import { database } from "@/app/api/infra/database";
 
 export class PrismaUnburdenRepository implements IUnburdenRepository {
-  async create(data: Prisma.UnburdenCreateInput): Promise<Unburden> {
+  async create(
+    data: Prisma.UnburdenCreateInput,
+  ): Promise<UnburdenWithSupports> {
     const unburden = await database.unburden.create({ data });
-    return unburden;
+    return { ...unburden, suportsAmount: 0 };
   }
 
-  async findMany(): Promise<Unburden[]> {
-    const unburdens = await database.unburden.findMany();
-    return unburdens;
+  async findMany(): Promise<UnburdenWithSupports[]> {
+    const unburdens = await database.unburden.findMany({
+      include: {
+        _count: {
+          select: { supports: true },
+        },
+      },
+    });
+
+    return unburdens.map((unburden) => {
+      return { ...unburden, suportsAmount: unburden._count.supports };
+    });
   }
 }

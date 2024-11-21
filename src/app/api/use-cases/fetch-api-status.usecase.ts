@@ -20,13 +20,13 @@ type DataBaseInfo = {
   openedConnections: number;
 };
 
-type Output = {
+export type FetchApiStatusOutput = {
   updatedAt: string;
   database: DataBaseInfo;
 };
 
-export class FetchApiStatus implements IUseCase<void, Output> {
-  async execute(): Promise<Output> {
+export class FetchApiStatus implements IUseCase<void, FetchApiStatusOutput> {
+  async execute(): Promise<FetchApiStatusOutput> {
     const updatedAt = new Date().toISOString();
 
     const databaseVersion = (

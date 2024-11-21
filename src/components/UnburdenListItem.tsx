@@ -1,7 +1,6 @@
 import { FaHashtag } from "react-icons/fa";
 
 import { UnburdenType } from "@/types/unburden.type";
-import { PiHandHeartThin } from "react-icons/pi";
 import { SupportButton } from "./SupportButton";
 
 type UnburdenProps = {
@@ -23,9 +22,19 @@ export function UnburdenListItem({ data }: UnburdenProps) {
           {<FaHashtag />} {data.title}
         </h1>
         <p className="px-1">{data.description}</p>
-        <p className="text-xs text-end text-zinc-500 mt-2">
-          20 demostrações de apoio
-        </p>
+        <>
+          {data.supports_amount === 0 ? (
+            <p className="text-xs text-end text-zinc-500 mt-2">
+              Seja o primeiro a demonstrar apoio
+            </p>
+          ) : (
+            <p className="text-xs text-end text-zinc-500 mt-2">
+              {data.supports_amount}{" "}
+              {data.supports_amount === 1 ? "demonstração" : "demostrações"} de
+              apoio
+            </p>
+          )}
+        </>
       </div>
       <div className="flex justify-end mt-2">
         <SupportButton />

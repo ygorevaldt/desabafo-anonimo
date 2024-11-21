@@ -10,7 +10,7 @@ describe("unburden", () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   it("should fetch a list of unburdens", async () => {
-    await Promise.all([
+    const [res1, res2] = await Promise.all([
       axios.post(`${baseUrl}/api/v1/unburden`, {
         title: "Desabafo 1",
         content: "Este é apenas um desabafo sincero 1",
@@ -22,6 +22,7 @@ describe("unburden", () => {
     ]);
 
     const { status, data } = await axios.get(`${baseUrl}/api/v1/unburden`);
+    console.log("data", data.unburdens[0]._count);
 
     expect(status).toEqual(HttpStatusCode.Ok);
     expect(data).toHaveProperty("unburdens");
