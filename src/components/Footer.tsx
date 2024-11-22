@@ -6,7 +6,7 @@ export function Footer() {
     <footer
       className="
         w-full border-t-2 border-zinc-300
-        flex gap-1 items-center justify-between
+        flex gap-2 items-center justify-between
         p-5 bg-white shadow-lg
         z-10"
     >
@@ -15,16 +15,16 @@ export function Footer() {
           © Copyright 2024. Todos os direitos reservados
         </p>
       </div>
-      <div className="flex gap-1 items-center">
-        <div className="flex gap-1 items-center">
-          <p>Feito com </p>
+      <div className="flex gap-1 items-center flex-nowrap">
+        <div className="flex gap-1 items-center flex-nowrap">
+          <p className="text-nowrap">Feito com </p>
           <AiOutlineHeart className="text-red-500" />
           <p>por:</p>
         </div>
         <Link
           href={"https://github.com/ygorevaldt"}
           target="_blank"
-          className="font-bold"
+          className="font-bold text-nowrap"
         >
           Ygor Evaldt
         </Link>

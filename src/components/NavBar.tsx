@@ -9,11 +9,11 @@ export function NavBar() {
         </h1>
       </Link>
       <ul className="flex items-center justify-end gap-4">
-        <li>
+        {/* <li>
           <Link href={"/about"} className={`nav-link`}>
             Sobre
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link href={"/unburdens"} className={`nav-link`}>
             Desabafos
