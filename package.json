@@ -11,6 +11,7 @@
     "services:down": "docker compose -f src/app/api/infra/compose.yaml down",
     "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
