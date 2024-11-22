@@ -8,10 +8,10 @@ const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <DinamicPage className="flex flex-col justify-center py-10">
-      <article className="flex flex-col gap-8">
+    <DinamicPage className="flex flex-col justify-center py-24 md:py-10">
+      <article className="flex flex-col gap-10">
         <header className="flex flex-col gap-6 text-center">
-          <h1 className="text-5xl text-rose-400">
+          <h1 className="text-5xl text-rose-400 p-0">
             Muitas vezes, só precisamos ser ouvidos
           </h1>
         </header>
@@ -23,7 +23,7 @@ export default function Home() {
               ${istokWeb.className} text-zinc-600 text-lg text-center
           `}
           >
-            <p>
+            <p className="text-justify md:text-center">
               Este é um espaço seguro e anônimo para você se expressar, ser você
               mesmo sem receios. Desabafe sobre qualquer coisa, seus problemas,
               suas angústias, seus sonhos, suas frustrações e conquistas. Aqui

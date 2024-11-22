@@ -2,7 +2,13 @@ import Link from "next/link";
 
 export function NavBar() {
   return (
-    <aside className="flex items-center justify-between px-10 py-8 border-b-2 border-zinc-300">
+    <aside
+      className="
+        flex items-center justify-between
+        px-4 md:px-10 py-8 
+        border-b-2 border-zinc-300
+      "
+    >
       <Link href={"/"}>
         <h1 className="text-[1.65rem] font-bold hover:scale-110 duration-300">
           Desabafo Anônimo

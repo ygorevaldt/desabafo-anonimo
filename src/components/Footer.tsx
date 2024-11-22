@@ -5,8 +5,9 @@ export function Footer() {
   return (
     <footer
       className="
+        flex flex-col-reverse gap-2 items-center justify-between
+        md:flex md:flex-row
         w-full border-t-2 border-zinc-300
-        flex gap-2 items-center justify-between
         p-5 bg-white shadow-lg
         z-10"
     >
