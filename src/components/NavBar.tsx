@@ -7,6 +7,7 @@ export function NavBar() {
         flex items-center justify-between
         px-4 md:px-10 py-8 
         border-b-2 border-zinc-300
+        w-full bg-white
       "
     >
       <Link href={"/"}>
@@ -20,11 +21,6 @@ export function NavBar() {
             Sobre
           </Link>
         </li> */}
-        <li>
-          <Link href={"/unburdens"} className={`nav-link`}>
-            Desabafos
-          </Link>
-        </li>
       </ul>
     </aside>
   );
