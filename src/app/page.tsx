@@ -3,35 +3,40 @@ import { FaFeather } from "react-icons/fa";
 import { Istok_Web } from "next/font/google";
 
 import { DinamicPage } from "@/components/DinamicPage";
+import { UnburdenList } from "@/components/UnburdenList";
 
 const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <DinamicPage className="flex flex-col justify-center py-24 md:py-10">
-      <article className="flex flex-col gap-10">
-        <header className="flex flex-col gap-6 text-center">
+    <DinamicPage
+      className="
+        flex flex-col gap-16
+        justify-center 
+        py-20 md:py-10
+      "
+    >
+      <section className="flex flex-col gap-8 justify-center min-h-[calc(100vh-144px)]">
+        <header className="text-center">
           <h1 className="text-5xl text-rose-400 p-0">
             Muitas vezes, só precisamos ser ouvidos
           </h1>
         </header>
-        <main className="flex flex-col gap-12 justify-center items-center">
-          <div
-            className={`
-              flex flex-col gap-1
-              md:w-2/3 m-auto
-              ${istokWeb.className} text-zinc-600 text-lg text-center
-          `}
-          >
-            <p className="text-justify md:text-center">
-              Este é um espaço seguro e anônimo para você se expressar, ser você
-              mesmo sem receios. Desabafe sobre qualquer coisa, seus problemas,
-              suas angústias, seus sonhos, suas frustrações e conquistas. Aqui
-              você será ouvido e apoiado. Encontre acolhimento em cada palavra
-              compartilhada, apoio em cada história que se conecta com a sua.
-              Desabafe, se expresse, se liberte.
-            </p>
-          </div>
+        <div
+          className="
+          flex flex-col gap-10
+          justify-center items-center
+          pb-10 md:pb-0
+        "
+        >
+          <p className="text-center text-zinc-600 text-lg md:w-2/3 m-auto">
+            Este é um espaço seguro e anônimo para você se expressar, ser você
+            mesmo sem receios. Desabafe sobre qualquer coisa, seus problemas,
+            suas angústias, seus sonhos, suas frustrações e conquistas. Aqui
+            você será ouvido e apoiado. Encontre acolhimento em cada palavra
+            compartilhada, apoio em cada história que se conecta com a sua.
+            Desabafe, se expresse, se liberte.
+          </p>
           <Link
             href={"/unburden"}
             className="
@@ -47,8 +52,14 @@ export default function Home() {
           >
             Desabafar <FaFeather />
           </Link>
-        </main>
-      </article>
+        </div>
+      </section>
+      <main className="flex flex-col gap-4 items-start">
+        <header className="text-start">
+          <h1 className="text-2xl font-semibold text-start">Desabafos</h1>
+        </header>
+        <UnburdenList />
+      </main>
     </DinamicPage>
   );
 }
