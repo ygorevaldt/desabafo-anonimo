@@ -4,7 +4,6 @@ import { UnburdenType } from "@/types/unburden.type";
 import { SupportButton } from "./SupportButton";
 import { useState } from "react";
 import axios from "axios";
-import { Loading } from "./Loading";
 import { Time } from "./Time";
 import { SupportsAmount } from "./SupportsAmount";
 
@@ -14,9 +13,17 @@ type UnburdenProps = {
 
 export function UnburdenListItem({ unburden }: UnburdenProps) {
   const [data, setData] = useState(unburden);
+  const supportedUnburdens = JSON.parse(
+    localStorage.getItem("supportedUnburdens") || "[]",
+  );
 
   async function handleRegisterSupport() {
     try {
+      if (supportedUnburdens.includes(unburden.id)) {
+        alert("Você já apoiou este desabafo.");
+        return;
+      }
+
       await axios.post("/api/v1/support", { unburdenId: unburden.id });
       setData((currentState) => {
         return {
@@ -25,6 +32,11 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         };
       });
       unburden.supports_amount += 1;
+
+      localStorage.setItem(
+        "supportedUnburdens",
+        JSON.stringify([...supportedUnburdens, unburden.id]),
+      );
     } catch (error) {
       console.error(error);
     }
@@ -40,14 +52,20 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         hover:shadow-md duration-300
       "
       >
-        <div className="flex justify-between items-start">
-          <h1 className="text-xl font-bold text-rose-500 flex items-center gap-1 pt-4">
+        <div className="md:flex md:flex-row flex flex-col-reverse justify-between items-start">
+          <h1
+            className="
+            text-xl font-bold text-rose-500
+            flex items-start gap-1 pt-4"
+          >
             {<FaHashtag />} {unburden.title}
           </h1>
-          <Time
-            publishedAt={new Date(unburden.created_at)}
-            className="text-zinc-400 text-xs"
-          />
+          <div className="w-full md:w-fit flex justify-end">
+            <Time
+              publishedAt={new Date(unburden.created_at)}
+              className="text-zinc-400 text-xs"
+            />
+          </div>
         </div>
         <p className="px-1 whitespace-pre-wrap">{unburden.content}</p>
         <SupportsAmount
@@ -56,7 +74,10 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         />
       </div>
       <div className="flex justify-end mt-2">
-        <SupportButton registerSupport={handleRegisterSupport} />
+        <SupportButton
+          registerSupport={handleRegisterSupport}
+          disabled={supportedUnburdens.includes(unburden.id)}
+        />
       </div>
     </li>
   );
