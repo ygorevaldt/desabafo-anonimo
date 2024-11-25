@@ -21,6 +21,10 @@ body {
 }
 
 @layer components {
+  .link {
+    @apply hover:text-rose-400 duration-300;
+  }
+
   .spinner-border {
     @apply border-t-rose-500 border-r-transparent border-b-transparent border-l-rose-500;
   }

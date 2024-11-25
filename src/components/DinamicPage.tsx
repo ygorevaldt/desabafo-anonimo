@@ -15,10 +15,7 @@ export function DinamicPage({ children, className }: DinamicPageProps) {
         <NavBar />
         <div
           className={`
-            flex-grow
-            max-w-5xl w-full 
-            my-0 mx-auto px-4 py-10
-            md:p-10
+            flex-grow max-w-5xl w-full px-4 py-10 md:p-10 mx-auto
             ${className ?? ""}
           `}
         >

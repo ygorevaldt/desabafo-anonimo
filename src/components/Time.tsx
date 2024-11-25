@@ -21,7 +21,7 @@ export function Time({ publishedAt, className }: TimeProps) {
 
   return (
     <time
-      className={` ${className ?? ""}`}
+      className={`text-nowrap ${className ?? ""}`}
       title={publishedAtFormatted}
       dateTime={publishedAt.toISOString()}
     >
