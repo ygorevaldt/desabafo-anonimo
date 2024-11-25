@@ -28,8 +28,8 @@ export function UnburdenForm() {
         unburden,
       );
       setIsLoading(false);
-
       setIsSended(true);
+
       router.push("/unburdens");
     } catch (error) {
       console.error(error);

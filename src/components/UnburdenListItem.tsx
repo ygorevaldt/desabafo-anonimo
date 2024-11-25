@@ -1,3 +1,5 @@
+"use client";
+
 import { FaHashtag } from "react-icons/fa";
 
 import { UnburdenType } from "@/types/unburden.type";
