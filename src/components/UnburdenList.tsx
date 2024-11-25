@@ -11,12 +11,16 @@ import { Loading } from "./Loading";
 export function UnburdenList() {
   const [isLoading, setIsLoading] = useState(false);
   const [unburdens, setUnburdens] = useState<UnburdenType[]>([]);
+  const [supportedUnburdens, setSupportedUnburdens] = useState<string[]>([]);
 
-  const supportedUnburdens = JSON.parse(
-    localStorage.getItem("supportedUnburdens") || "[]",
-  );
-
-  console.log(supportedUnburdens);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const unburdens = JSON.parse(
+        localStorage.getItem("supportedUnburdens") || "[]",
+      );
+      setSupportedUnburdens(unburdens);
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);

@@ -1,10 +1,8 @@
-"use client";
-
 import { FaHashtag } from "react-icons/fa";
 
 import { UnburdenType } from "@/types/unburden.type";
 import { SupportButton } from "./SupportButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Time } from "./Time";
 import { SupportsAmount } from "./SupportsAmount";
@@ -15,9 +13,17 @@ type UnburdenProps = {
 
 export function UnburdenListItem({ unburden }: UnburdenProps) {
   const [data, setData] = useState(unburden);
-  const supportedUnburdens = JSON.parse(
-    localStorage.getItem("supportedUnburdens") || "[]",
-  );
+
+  const [supportedUnburdens, setSupportedUnburdens] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const unburdens = JSON.parse(
+        localStorage.getItem("supportedUnburdens") || "[]",
+      );
+      setSupportedUnburdens(unburdens);
+    }
+  }, []);
 
   async function handleRegisterSupport() {
     try {
@@ -39,6 +45,8 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         "supportedUnburdens",
         JSON.stringify([...supportedUnburdens, unburden.id]),
       );
+
+      setSupportedUnburdens([...supportedUnburdens, unburden.id]);
     } catch (error) {
       console.error(error);
     }
