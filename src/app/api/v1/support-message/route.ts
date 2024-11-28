@@ -16,6 +16,10 @@ export async function POST(request: NextRequest) {
       status: HttpStatusCode.OK,
     });
   } catch (error) {
-    return NextResponse.json({ status: HttpStatusCode.INTERNAL_SERVER_ERROR });
+    console.error(error);
+    return NextResponse.json({
+      status: HttpStatusCode.TOO_MANY_REQUESTS,
+      support_message: "Mensagens de apoio indisponíveis no momento",
+    });
   }
 }
