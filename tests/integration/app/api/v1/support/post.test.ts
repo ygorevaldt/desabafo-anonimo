@@ -9,7 +9,7 @@ describe("support", () => {
     await database.unburden.deleteMany();
   });
 
-  it("should register a new support to existing unburden", async () => {
+  it("POST to /api/v1/support should return http status code 201", async () => {
     const createUnburdenResponse = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
       {

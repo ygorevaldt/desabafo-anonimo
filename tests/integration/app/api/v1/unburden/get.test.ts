@@ -10,7 +10,7 @@ describe("unburden", () => {
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-  it("should fetch a list of unburdens", async () => {
+  it("GET to /api/v1/unburden should return http status code 200 and a list of unburdens", async () => {
     const [res1, res2] = await Promise.all([
       axios.post(`${baseUrl}/api/v1/unburden`, {
         title: "Desabafo 1",

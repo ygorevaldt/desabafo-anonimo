@@ -3,7 +3,7 @@ import axios from "axios";
 import { describe, expect, it } from "vitest";
 
 describe("status", () => {
-  it("should return data from api status", async () => {
+  it("GET to /api/v1/status should return http status code 200 and the api status info", async () => {
     const { status, data } = await axios.get(
       "http://localhost:3000/api/v1/status",
     );

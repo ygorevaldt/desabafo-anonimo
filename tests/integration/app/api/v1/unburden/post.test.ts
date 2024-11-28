@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "@/app/api/constants/http-status-code";
 import { database } from "@/app/api/infra/database";
 import axios from "axios";
 import { headers } from "next/headers";
@@ -9,7 +10,7 @@ describe("unburden", () => {
     await database.unburden.deleteMany();
   });
 
-  it("should register a new unburden", async () => {
+  it("POST to /api/v1/unburden should return http status code 201", async () => {
     const unburden = {
       title: "Desabafo",
       content: "Este é apenas um desabado sincero",
@@ -25,6 +26,6 @@ describe("unburden", () => {
       },
     );
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(HttpStatusCode.CREATED);
   });
 });
