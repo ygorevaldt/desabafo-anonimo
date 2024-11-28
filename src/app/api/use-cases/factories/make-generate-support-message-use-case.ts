@@ -3,9 +3,9 @@ import { GenerateSupportMessageUseCase } from "../generate-support-message.useca
 import { OpenIa } from "../../infra/open-ai";
 
 export function makeGenerateSupportMessageUseCase() {
-  // const gemini = new Gemini();
-  const openIa = new OpenIa();
-  const usecase = new GenerateSupportMessageUseCase(openIa);
+  // const openIa = new OpenIa();
+  const gemini = new Gemini();
+  const usecase = new GenerateSupportMessageUseCase(gemini);
 
   return usecase;
 }
