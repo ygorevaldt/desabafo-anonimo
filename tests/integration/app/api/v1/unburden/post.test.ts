@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 describe("unburden", () => {
   beforeEach(async () => {
+    await database.support.deleteMany();
     await database.unburden.deleteMany();
   });
 
