@@ -14,8 +14,12 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     return { ...unburden, suportsAmount: 0 };
   }
 
-  async findMany(): Promise<UnburdenWithSupports[]> {
+  async findMany(page: number, take: number): Promise<UnburdenWithSupports[]> {
+    const skip = page === 0 ? page * take : (page - 1) * take;
+
     const unburdens = await database.unburden.findMany({
+      skip,
+      take,
       include: {
         _count: {
           select: { supports: true },
@@ -29,5 +33,10 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     return unburdens.map((unburden) => {
       return { ...unburden, suportsAmount: unburden._count.supports };
     });
+  }
+
+  async total(): Promise<number> {
+    const total = await database.unburden.count();
+    return total;
   }
 }

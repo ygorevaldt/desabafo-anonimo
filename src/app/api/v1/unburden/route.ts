@@ -22,15 +22,21 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const listUnburdensUseCase = makeListUnburdensUseCase();
+  const { searchParams } = new URL(request.url);
+  const page = searchParams.get("page");
 
   try {
-    const response = await listUnburdensUseCase.execute();
+    const response = await listUnburdensUseCase.execute({ page: Number(page) });
+    const unburdens = response.unburdens.map((item) => {
+      return new UnburdenResponseDto(item);
+    });
     return NextResponse.json({
-      unburdens: response.unburdens.map((item) => {
-        return new UnburdenResponseDto(item);
-      }),
+      unburdens,
+      page: response.page,
+      take: response.take,
+      total: response.total,
     });
   } catch (error) {
     return NextResponse.json({ status: HttpStatusCode.INTERNAL_SERVER_ERROR });

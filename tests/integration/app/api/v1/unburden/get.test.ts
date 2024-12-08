@@ -22,10 +22,14 @@ describe("unburden", () => {
       }),
     ]);
 
-    const { status, data } = await axios.get(`${baseUrl}/api/v1/unburden`);
+    const { status, data } = await axios.get(
+      `${baseUrl}/api/v1/unburden?page=1`,
+    );
 
     expect(status).toEqual(HttpStatusCode.Ok);
     expect(data).toHaveProperty("unburdens");
     expect(data.unburdens.length).toEqual(2);
+    expect(data.page).toEqual(1);
+    expect(data.total).toEqual(2);
   });
 });
