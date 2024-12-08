@@ -7,11 +7,36 @@ import { UnburdenType } from "@/types/unburden.type";
 
 import { UnburdenListItem } from "./UnburdenListItem";
 import { Loading } from "./Loading";
+import { LoadMoreButton } from "./LoadMoreButton";
 
 export function UnburdenList() {
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [unburdens, setUnburdens] = useState<UnburdenType[]>([]);
   const [supportedUnburdens, setSupportedUnburdens] = useState<string[]>([]);
+  const [showMoreUnburdensButton, setShowMoreUnburdensButton] = useState(true);
+
+  async function handleFetchMoreUnburdens() {
+    try {
+      setIsLoading(true);
+      const newPage = page + 1;
+      setPage(newPage);
+
+      const response = await axios.get(`/api/v1/unburden?page=${newPage}`);
+      const updatedUnburdens = [...unburdens, ...response.data.unburdens];
+      setUnburdens(updatedUnburdens);
+
+      const isRecoveredAllTheUnburdens =
+        response.data.total == updatedUnburdens.length;
+      if (!isRecoveredAllTheUnburdens) return;
+
+      setShowMoreUnburdensButton(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -25,9 +50,15 @@ export function UnburdenList() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("/api/v1/unburden")
+      .get(`/api/v1/unburden?page=${page}`)
       .then((response) => {
-        setUnburdens(response.data.unburdens);
+        const { unburdens, total } = response.data;
+        setUnburdens(unburdens);
+
+        const isRecoveredAllTheUnburdens = total == unburdens?.length;
+        if (!isRecoveredAllTheUnburdens) return;
+
+        setShowMoreUnburdensButton(false);
       })
       .catch((error) => {
         console.error(error);
@@ -38,7 +69,7 @@ export function UnburdenList() {
   }, []);
 
   return (
-    <>
+    <div className="w-full flex flex-col gap-10">
       {Array.isArray(unburdens) && unburdens[0] ? (
         <ul className="flex flex-col gap-6">
           {unburdens.map((unburden) => {
@@ -57,6 +88,9 @@ export function UnburdenList() {
         </div>
       )}
       {isLoading && <Loading />}
-    </>
+      {showMoreUnburdensButton && (
+        <LoadMoreButton action={handleFetchMoreUnburdens} />
+      )}
+    </div>
   );
 }
