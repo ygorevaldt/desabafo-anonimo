@@ -4,11 +4,23 @@ import { HttpStatusCode } from "../../constants/http-status-code";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const registerUnburdenUseCase = makeRegisterSupportUseCase();
+  const registerSupportUseCase = makeRegisterSupportUseCase();
 
   try {
+    const sessionId = request.cookies.get("session_id")?.value;
+    if (!sessionId) {
+      return NextResponse.json({
+        status: HttpStatusCode.UNAUTHORIZED,
+        error: "session_id not valid",
+      });
+    }
+
     const { unburdenId } = await request.json();
-    const { support } = await registerUnburdenUseCase.execute({ unburdenId });
+
+    const { support } = await registerSupportUseCase.execute({
+      unburdenId,
+      sessionId,
+    });
 
     return NextResponse.json(new SupportResponseDto(support), {
       status: HttpStatusCode.CREATED,

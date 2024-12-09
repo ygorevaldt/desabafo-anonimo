@@ -17,11 +17,6 @@ export function sessionIdMiddleware(request: NextRequest) {
     secure: process.env.NODE_ENV === "production",
   });
 
-  request.cookies.set({
-    name: "session_id",
-    value: sessionId,
-  });
-
   sessionId = request.cookies.get("session_id")?.value;
 
   return response;

@@ -3,6 +3,7 @@ import { makeRegisterUnburdenUseCase } from "../../use-cases/factories/make-regi
 import { HttpStatusCode } from "../../constants/http-status-code";
 import { makeListUnburdensUseCase } from "../../use-cases/factories/make-list-unburdens-use-case";
 import { UnburdenResponseDto } from "../dtos/unburden-response.dto";
+import { sessionIdMiddleware } from "../middlewares/session-id.middleware";
 
 export async function POST(request: NextRequest) {
   const registerUnburdenUseCase = makeRegisterUnburdenUseCase();
@@ -27,11 +28,17 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get("page");
 
+  const sessionId = request.cookies.get("session_id")?.value;
+
   try {
-    const response = await listUnburdensUseCase.execute({ page: Number(page) });
+    const response = await listUnburdensUseCase.execute({
+      page: Number(page),
+      sessionId: sessionId ?? "",
+    });
     const unburdens = response.unburdens.map((item) => {
       return new UnburdenResponseDto(item);
     });
+
     return NextResponse.json({
       unburdens,
       page: response.page,

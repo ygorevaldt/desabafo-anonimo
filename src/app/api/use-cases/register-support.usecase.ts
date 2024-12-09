@@ -4,6 +4,7 @@ import { IUseCase } from "./use-case.interface";
 
 type Input = {
   unburdenId: string;
+  sessionId: string;
 };
 
 type Output = {

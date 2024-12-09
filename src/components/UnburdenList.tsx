@@ -8,12 +8,12 @@ import { UnburdenType } from "@/types/unburden.type";
 import { UnburdenListItem } from "./UnburdenListItem";
 import { Loading } from "./Loading";
 import { LoadMoreButton } from "./LoadMoreButton";
+import { truncateSync } from "fs";
 
 export function UnburdenList() {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [unburdens, setUnburdens] = useState<UnburdenType[]>([]);
-  const [supportedUnburdens, setSupportedUnburdens] = useState<string[]>([]);
   const [showMoreUnburdensButton, setShowMoreUnburdensButton] = useState(true);
 
   async function handleFetchMoreUnburdens() {
@@ -39,18 +39,11 @@ export function UnburdenList() {
   }
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const unburdens = JSON.parse(
-        localStorage.getItem("supportedUnburdens") || "[]",
-      );
-      setSupportedUnburdens(unburdens);
-    }
-  }, []);
-
-  useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`/api/v1/unburden?page=${page}`)
+      .get(`/api/v1/unburden?page=${page}`, {
+        withCredentials: true,
+      })
       .then((response) => {
         const { unburdens, total } = response.data;
         setUnburdens(unburdens);
@@ -73,10 +66,6 @@ export function UnburdenList() {
       {Array.isArray(unburdens) && unburdens[0] ? (
         <ul className="flex flex-col gap-6">
           {unburdens.map((unburden) => {
-            const unburdenSupported: boolean = supportedUnburdens.includes(
-              unburden.id,
-            );
-
             return <UnburdenListItem unburden={unburden} key={unburden.id} />;
           })}
         </ul>

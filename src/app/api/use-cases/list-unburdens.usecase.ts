@@ -6,6 +6,7 @@ import {
 
 type Input = {
   page: number;
+  sessionId: string;
 };
 
 type Output = {
@@ -18,17 +19,22 @@ type Output = {
 export class ListUnburdensUseCase implements IUseCase<Input, Output> {
   constructor(private unburdenRepository: IUnburdenRepository) {}
 
-  async execute({ page }: Input): Promise<Output> {
-    const take = 25;
+  async execute({ page, sessionId }: Input): Promise<Output> {
+    const REGISTERS_BY_PAGE_TOTAL = 25;
+
     const [unburdens, total] = await Promise.all([
-      this.unburdenRepository.findMany(page ?? 1, take),
+      this.unburdenRepository.findMany({
+        page: page ?? 1,
+        take: REGISTERS_BY_PAGE_TOTAL,
+        sessionId,
+      }),
       this.unburdenRepository.total(),
     ]);
 
     return {
       unburdens,
       page,
-      take,
+      take: REGISTERS_BY_PAGE_TOTAL,
       total,
     };
   }

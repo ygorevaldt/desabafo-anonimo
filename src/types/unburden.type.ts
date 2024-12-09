@@ -4,4 +4,5 @@ export type UnburdenType = {
   content: string;
   created_at: string;
   supports_amount: number;
+  supported: boolean;
 };

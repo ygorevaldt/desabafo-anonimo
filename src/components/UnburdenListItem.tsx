@@ -14,20 +14,9 @@ type UnburdenProps = {
 export function UnburdenListItem({ unburden }: UnburdenProps) {
   const [data, setData] = useState(unburden);
 
-  const [supportedUnburdens, setSupportedUnburdens] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const unburdens = JSON.parse(
-        localStorage.getItem("supportedUnburdens") || "[]",
-      );
-      setSupportedUnburdens(unburdens);
-    }
-  }, []);
-
   async function handleRegisterSupport() {
     try {
-      if (supportedUnburdens.includes(unburden.id)) {
+      if (unburden.supported) {
         alert("Você já apoiou este desabafo.");
         return;
       }
@@ -37,16 +26,9 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         return {
           ...currentState,
           supports_amount: currentState.supports_amount + 1,
+          supported: true,
         };
       });
-      unburden.supports_amount += 1;
-
-      localStorage.setItem(
-        "supportedUnburdens",
-        JSON.stringify([...supportedUnburdens, unburden.id]),
-      );
-
-      setSupportedUnburdens([...supportedUnburdens, unburden.id]);
     } catch (error) {
       console.error(error);
     }
@@ -68,25 +50,25 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
             text-xl font-bold text-rose-500
             flex items-start gap-1 pt-4"
           >
-            {<FaHashtag />} {unburden.title}
+            {<FaHashtag />} {data.title}
           </h1>
           <div className="w-full md:w-fit flex justify-end">
             <Time
-              publishedAt={new Date(unburden.created_at)}
+              publishedAt={new Date(data.created_at)}
               className="text-zinc-400 text-xs"
             />
           </div>
         </div>
-        <p className="px-1 whitespace-pre-wrap">{unburden.content}</p>
+        <p className="px-1 whitespace-pre-wrap">{data.content}</p>
         <SupportsAmount
-          amount={unburden.supports_amount}
+          amount={data.supports_amount}
           className="text-xs text-end text-zinc-400 mt-2"
         />
       </div>
       <div className="flex justify-end mt-2">
         <SupportButton
           registerSupport={handleRegisterSupport}
-          disabled={supportedUnburdens.includes(unburden.id)}
+          disabled={data.supported}
         />
       </div>
     </li>

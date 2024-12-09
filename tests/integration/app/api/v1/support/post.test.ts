@@ -17,6 +17,13 @@ describe("support", () => {
         content: "Este é apenas um desabado sincero",
       },
     );
+
+    const cookies = createUnburdenResponse.headers["set-cookie"];
+    const sessionId = cookies![0]
+      .split(";")
+      .find((item) => item.includes("session_id"))
+      ?.split("=")[1];
+
     const unburden = createUnburdenResponse.data;
 
     const createSupportResponse = await axios.post(
@@ -24,9 +31,15 @@ describe("support", () => {
       {
         unburdenId: unburden.id,
       },
+      {
+        headers: {
+          Cookie: `session_id=${sessionId}`,
+        },
+      },
     );
 
     const { status, data } = createSupportResponse;
+    console.log("data", data);
 
     expect(status).toEqual(HttpStatusCode.CREATED);
   });
