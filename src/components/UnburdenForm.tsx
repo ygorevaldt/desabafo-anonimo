@@ -23,7 +23,10 @@ export function UnburdenForm() {
     try {
       if (!unburden) return;
 
-      await axios.post("/api/v1/unburden", unburden);
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
+        unburden,
+      );
       setIsLoading(false);
       setIsSended(true);
 
