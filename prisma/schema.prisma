@@ -9,7 +9,7 @@ datasource db {
 
 model Support {
   id String @id @map("id") @db.Uuid @default(uuid())
-  sessionId String @map("session_id") @db.Uuid
+  sessionId String @map("session_id") @db.VarChar(21)
   unburdenId String @map("id_desabafo") @db.Uuid
   unburden Unburden @relation(fields: [unburdenId], references: [id])
 
