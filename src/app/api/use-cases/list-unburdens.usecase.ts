@@ -19,7 +19,7 @@ type Output = {
 export class ListUnburdensUseCase implements IUseCase<Input, Output> {
   constructor(private unburdenRepository: IUnburdenRepository) {}
 
-  async execute({ page, sessionId }: Input): Promise<Output> {
+  async execute({ page, sessionId = "" }: Input): Promise<Output> {
     const REGISTERS_BY_PAGE_TOTAL = 25;
 
     const [unburdens, total] = await Promise.all([
