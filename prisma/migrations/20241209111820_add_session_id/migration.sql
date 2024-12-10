@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "apoio" ADD COLUMN     "session_id" UUID NOT NULL;
+ALTER TABLE "apoio" ADD COLUMN     "session_id" UUID DEFAULT NULL;

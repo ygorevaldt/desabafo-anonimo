@@ -6,4 +6,4 @@
 */
 -- AlterTable
 ALTER TABLE "apoio" DROP COLUMN "session_id",
-ADD COLUMN     "session_id" VARCHAR(21) NOT NULL;
+ADD COLUMN     "session_id" VARCHAR(21) NOT NULL DEFAULT 'legacy';
