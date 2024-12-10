@@ -39,7 +39,6 @@ describe("support", () => {
     );
 
     const { status, data } = createSupportResponse;
-    console.log("data", data);
 
     expect(status).toEqual(HttpStatusCode.CREATED);
   });
