@@ -1,4 +1,4 @@
-import { FetchApiStatusOutput } from "@/app/api/use-cases/fetch-api-status.usecase";
+import { FetchApiStatusOutput } from "@/app/api/services/fetch-api-status.service";
 
 type Database = {
   version: string;

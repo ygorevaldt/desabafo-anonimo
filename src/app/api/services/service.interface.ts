@@ -1,3 +1,3 @@
-export interface IUseCase<In, Out> {
+export interface IService<In, Out> {
   execute(params: In): Promise<Out>;
 }

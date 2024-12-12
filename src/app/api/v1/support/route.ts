@@ -1,10 +1,10 @@
-import { makeRegisterSupportUseCase } from "@/app/api/use-cases/factories/make-register-support-use-case";
+import { makeRegisterSupportService } from "@/app/api/services/factories/make-register-support-service";
 import { SupportResponseDto } from "../dtos/support-response.dto";
 import { HttpStatusCode } from "../../constants/http-status-code";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const registerSupportUseCase = makeRegisterSupportUseCase();
+  const registerSupportService = makeRegisterSupportService();
 
   try {
     const sessionId = request.cookies.get("session_id")?.value;
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     const { unburdenId } = await request.json();
 
-    const { support } = await registerSupportUseCase.execute({
+    const { support } = await registerSupportService.execute({
       unburdenId,
       sessionId,
     });

@@ -1,4 +1,4 @@
-import { IUseCase } from "./use-case.interface";
+import { IService } from "./service.interface";
 import {
   IUnburdenRepository,
   UnburdenWithSupports,
@@ -16,7 +16,7 @@ type Output = {
   total: number;
 };
 
-export class ListUnburdensUseCase implements IUseCase<Input, Output> {
+export class ListUnburdensService implements IService<Input, Output> {
   constructor(private unburdenRepository: IUnburdenRepository) {}
 
   async execute({ page, sessionId = "" }: Input): Promise<Output> {

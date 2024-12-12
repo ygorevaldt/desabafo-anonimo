@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { IUseCase } from "./use-case.interface";
+import { IService } from "./service.interface";
 import { database } from "@/app/api/infra/database";
 
 type ServerVersion = {
@@ -25,7 +25,9 @@ export type FetchApiStatusOutput = {
   database: DataBaseInfo;
 };
 
-export class FetchApiStatus implements IUseCase<void, FetchApiStatusOutput> {
+export class FetchApiStatusService
+  implements IService<void, FetchApiStatusOutput>
+{
   async execute(): Promise<FetchApiStatusOutput> {
     const updatedAt = new Date().toISOString();
 

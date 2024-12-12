@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { makeRegisterUnburdenUseCase } from "../../use-cases/factories/make-register-unburden-use-case";
+import { makeRegisterUnburdenService } from "../../services/factories/make-register-unburden-service";
 import { HttpStatusCode } from "../../constants/http-status-code";
-import { makeListUnburdensUseCase } from "../../use-cases/factories/make-list-unburdens-use-case";
+import { makeListUnburdensService } from "../../services/factories/make-list-unburdens-service";
 import { UnburdenResponseDto } from "../dtos/unburden-response.dto";
-import { sessionIdMiddleware } from "../middlewares/session-id.middleware";
 
 export async function POST(request: NextRequest) {
-  const registerUnburdenUseCase = makeRegisterUnburdenUseCase();
+  const registerUnburdenService = makeRegisterUnburdenService();
 
   try {
     const { title, content } = await request.json();
-    const { unburden } = await registerUnburdenUseCase.execute({
+    const { unburden } = await registerUnburdenService.execute({
       title,
       content,
     });
@@ -24,14 +23,14 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const listUnburdensUseCase = makeListUnburdensUseCase();
+  const listUnburdensService = makeListUnburdensService();
   const { searchParams } = new URL(request.url);
   const page = searchParams.get("page");
 
   const sessionId = request.cookies.get("session_id")?.value;
 
   try {
-    const response = await listUnburdensUseCase.execute({
+    const response = await listUnburdensService.execute({
       page: Number(page),
       sessionId: sessionId ?? "",
     });

@@ -1,5 +1,5 @@
 import { Unburden } from "@prisma/client";
-import { IUseCase } from "./use-case.interface";
+import { IService } from "./service.interface";
 import {
   IUnburdenRepository,
   UnburdenWithSupports,
@@ -14,7 +14,7 @@ type Output = {
   unburden: UnburdenWithSupports;
 };
 
-export class RegisterUnburdenUseCase implements IUseCase<Input, Output> {
+export class RegisterUnburdenService implements IService<Input, Output> {
   constructor(private unburdenRepository: IUnburdenRepository) {}
 
   async execute(data: Input): Promise<Output> {

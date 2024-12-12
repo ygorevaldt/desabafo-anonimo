@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { FetchApiStatus } from "../../use-cases/fetch-api-status.usecase";
+import { NextResponse } from "next/server";
+import { FetchApiStatusService } from "../../services/fetch-api-status.service";
 import { StatusResponseDto } from "../dtos/status-response.dto";
 
-export async function GET(request: NextRequest) {
-  const fetchApiStatusUseCase = new FetchApiStatus();
-  const response = await fetchApiStatusUseCase.execute();
+export async function GET() {
+  const fetchApiStatusService = new FetchApiStatusService();
+  const response = await fetchApiStatusService.execute();
 
   return NextResponse.json(new StatusResponseDto(response));
 }
