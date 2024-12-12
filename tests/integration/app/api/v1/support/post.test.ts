@@ -41,5 +41,46 @@ describe("support", () => {
     const { status, data } = createSupportResponse;
 
     expect(status).toEqual(HttpStatusCode.CREATED);
+    expect(data).toHaveProperty("id");
+  });
+
+  it("POST to /api/v1/support should throw error with http status code 401", async () => {
+    const createUnburdenResponse = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
+      {
+        title: "Desabafo",
+        content: "Este é apenas um desabado sincero",
+      },
+    );
+
+    const unburden = createUnburdenResponse.data;
+    const exec = async () =>
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`, {
+        unburdenId: unburden.id,
+      });
+
+    await expect(exec()).rejects.toThrowError(
+      "Request failed with status code 401",
+    );
+  });
+
+  it("POST to /api/v1/support should throw error with http status code 500", async () => {
+    const sessionId = "generic_session_id";
+    const exec = async () =>
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
+        {
+          unburdenId: "",
+        },
+        {
+          headers: {
+            Cookie: `session_id=${sessionId}`,
+          },
+        },
+      );
+
+    await expect(exec()).rejects.toThrowError(
+      "Request failed with status code 500",
+    );
   });
 });

@@ -14,5 +14,6 @@ export interface FindManyParams {
 export interface IUnburdenRepository {
   create(data: Prisma.UnburdenCreateInput): Promise<UnburdenWithSupports>;
   findMany(params: FindManyParams): Promise<UnburdenWithSupports[]>;
+  findUnique(id: string): Promise<Unburden | null>;
   total(): Promise<number>;
 }

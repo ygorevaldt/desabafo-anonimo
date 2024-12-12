@@ -49,6 +49,14 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     });
   }
 
+  async findUnique(id: string): Promise<Unburden | null> {
+    const unburden = await database.unburden.findUnique({
+      where: { id },
+    });
+
+    return unburden;
+  }
+
   async total(): Promise<number> {
     const total = await database.unburden.count();
     return total;

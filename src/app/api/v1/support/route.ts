@@ -2,18 +2,19 @@ import { makeRegisterSupportService } from "@/app/api/services/factories/make-re
 import { SupportResponseDto } from "../dtos/support-response.dto";
 import { HttpStatusCode } from "../../constants/http-status-code";
 import { NextRequest, NextResponse } from "next/server";
+import { handleRequestError } from "../../utils/handle-request-error.util";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, response: NextResponse) {
   const registerSupportService = makeRegisterSupportService();
 
   try {
     const sessionId = request.cookies.get("session_id")?.value;
-    if (!sessionId) {
-      return NextResponse.json({
-        status: HttpStatusCode.UNAUTHORIZED,
-        error: "session_id not valid",
-      });
-    }
+    // if (!sessionId) {
+    //   return NextResponse.json(
+    //     { message: "ID de sessão inválido ou inexistente" },
+    //     { status: HttpStatusCode.UNAUTHORIZED },
+    //   );
+    // }
 
     const { unburdenId } = await request.json();
 
@@ -26,6 +27,6 @@ export async function POST(request: NextRequest) {
       status: HttpStatusCode.CREATED,
     });
   } catch (error) {
-    return NextResponse.json({ status: HttpStatusCode.INTERNAL_SERVER_ERROR });
+    return handleRequestError(error);
   }
 }
