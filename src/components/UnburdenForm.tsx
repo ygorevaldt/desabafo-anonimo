@@ -5,6 +5,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Loading } from "./Loading";
 import { useRouter } from "next/navigation";
 import { GiPartyPopper } from "react-icons/gi";
+import { errorAlert, successAlert } from "@/utils/alert";
 
 export function UnburdenForm() {
   const router = useRouter();
@@ -32,8 +33,13 @@ export function UnburdenForm() {
       setIsLoading(false);
       setIsSended(true);
 
+      await successAlert("Desabafo registrado com sucesso");
+
       router.push("/unburdens");
     } catch (error) {
+      errorAlert(
+        "Serviço indisponível, tente novamente dentro de alguns minutos",
+      );
       console.error(error);
     } finally {
       setIsLoading(false);
