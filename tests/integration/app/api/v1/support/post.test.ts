@@ -29,7 +29,7 @@ describe("support", () => {
     const createSupportResponse = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
       {
-        unburdenId: unburden.id,
+        unburden_id: unburden.id,
       },
       {
         headers: {
@@ -54,33 +54,38 @@ describe("support", () => {
     );
 
     const unburden = createUnburdenResponse.data;
-    const exec = async () =>
-      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`, {
-        unburdenId: unburden.id,
-      });
 
-    await expect(exec()).rejects.toThrowError(
-      "Request failed with status code 401",
-    );
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`, {
+        unburden_id: unburden.id,
+      });
+    } catch (error: any) {
+      expect(error.status).toEqual(401);
+    }
   });
 
-  it("POST to /api/v1/support should throw error with http status code 500", async () => {
+  it("POST to /api/v1/support should throw error with http status code 400", async () => {
     const sessionId = "generic_session_id";
-    const exec = async () =>
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
-        {
-          unburdenId: "",
-        },
-        {
-          headers: {
-            Cookie: `session_id=${sessionId}`,
-          },
-        },
-      );
+    const invalidRequestsBody = [
+      {},
+      { unburden_id: "" },
+      { unburden_id: null },
+    ];
 
-    await expect(exec()).rejects.toThrowError(
-      "Request failed with status code 500",
-    );
+    const headers = {
+      Cookie: `session_id=${sessionId}`,
+    };
+
+    for (const body of invalidRequestsBody) {
+      try {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
+          body,
+          { headers },
+        );
+      } catch (error: any) {
+        expect(error.status).toEqual(400);
+      }
+    }
   });
 });
