@@ -4,18 +4,11 @@ import { HttpStatusCode } from "../../constants/http-status-code";
 import { NextRequest, NextResponse } from "next/server";
 import { handleRequestError } from "../../utils/handle-request-error.util";
 
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST(request: NextRequest) {
   const registerSupportService = makeRegisterSupportService();
 
   try {
     const sessionId = request.cookies.get("session_id")?.value;
-    // if (!sessionId) {
-    //   return NextResponse.json(
-    //     { message: "ID de sessão inválido ou inexistente" },
-    //     { status: HttpStatusCode.UNAUTHORIZED },
-    //   );
-    // }
-
     const { unburdenId } = await request.json();
 
     const { support } = await registerSupportService.execute({
