@@ -15,4 +15,4 @@ export const CONTENT_MAX_LENGTH_MESSAGE = `O conteúdo deve ter no máximo ${CON
 export const UUID_LENGTH = 36;
 export const UUID_INVALID_TYPE_MESSAGE =
   "O idêntificador do desabafo deve ser um uuid";
-export const UUID_LENGTH_MESSAGE = `O idêntificador do desabafo deve ter ${UUID_LENGTH} caracteres`;
+export const UUID_LENGTH_MESSAGE = `O idêntificador deve ter ${UUID_LENGTH} caracteres`;

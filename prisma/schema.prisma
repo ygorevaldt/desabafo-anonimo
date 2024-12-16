@@ -10,8 +10,10 @@ datasource db {
 model Support {
   id String @id @map("id") @db.Uuid @default(uuid())
   sessionId String @map("session_id") @db.VarChar(36) @default(dbgenerated("gen_random_uuid()::TEXT"))
-  unburdenId String @map("id_desabafo") @db.Uuid
-  unburden Unburden @relation(fields: [unburdenId], references: [id])
+  unburdenId String? @map("id_desabafo") @db.Uuid
+  unburden Unburden? @relation(fields: [unburdenId], references: [id])
+  commentId String? @map("id_comentario") @db.Uuid
+  comment Comment? @relation(fields: [commentId], references: [id])
 
   @@map("apoio")
 }
@@ -24,4 +26,16 @@ model Unburden {
   supports Support[]
 
   @@map("desabafo")
+}
+
+model Comment {
+  id String @id @map("id") @db.Uuid @default(uuid())
+  content String @map("conteudo") @db.VarChar(1500)
+  createdAt DateTime @map("created_at") @db.Timestamp @default(now())
+  subcommentId String? @map("id_subcomentario") @db.Uuid
+  subcomment Comment? @relation("Subcomment", fields: [subcommentId], references: [id])
+  subcomments Comment[] @relation("Subcomment")
+  supports Support[]
+
+  @@map("comentario")
 }

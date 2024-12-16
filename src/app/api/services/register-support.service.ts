@@ -8,7 +8,8 @@ import {
 } from "./exceptions";
 
 type Input = {
-  unburdenId: string;
+  unburdenId: string | undefined;
+  commentId: string | undefined;
   sessionId?: string;
 };
 
@@ -22,14 +23,25 @@ export class RegisterSupportService implements IService<Input, Output> {
     private supportRepository: ISupportRepository,
   ) {}
 
-  async execute(data: Input): Promise<Output> {
-    if (!data.sessionId) throw new InvalidSessionIdException();
+  async execute({ unburdenId, commentId, sessionId }: Input): Promise<Output> {
+    if (!sessionId) throw new InvalidSessionIdException();
 
-    const registredUnburden = await this.unburdenRepository.findUnique(
-      data.unburdenId,
-    );
-    if (registredUnburden === null) throw new RegisterNotFoundException();
+    if (unburdenId) {
+      const registredUnburden =
+        await this.unburdenRepository.findUnique(unburdenId);
+      if (registredUnburden === null) throw new RegisterNotFoundException();
+    }
 
+    if (commentId) {
+      //confirma existencia do comentário
+      // caso comentário não exista, lançar exception de registro não encontrado
+    }
+
+    const data = {
+      unburdenId: unburdenId ?? null,
+      commentId: commentId ?? null,
+      sessionId,
+    };
     const support = await this.supportRepository.create(data);
     return { support };
   }

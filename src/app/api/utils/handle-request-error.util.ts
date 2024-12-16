@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { HttpStatusCode } from "../constants/http-status-code";
-import { InvalidSessionIdException } from "../services/exceptions";
+import {
+  InvalidSessionIdException,
+  RegisterNotFoundException,
+} from "../services/exceptions";
 
 export function handleRequestError(error: any) {
   if (process.env.NODE_ENV !== "production") {

@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
 
     const { support } = await registerSupportService.execute({
       unburdenId: body.unburden_id,
+      commentId: body.comment_id,
       sessionId,
     });
 
