@@ -6,10 +6,11 @@ import {
   RegisterNotFoundException,
   InvalidSessionIdException,
 } from "./exceptions";
+import { ICommentRepository } from "../repositories/comment/comment-repository.interface";
 
 type Input = {
-  unburdenId: string | undefined;
-  commentId: string | undefined;
+  unburdenId?: string;
+  commentId?: string;
   sessionId?: string;
 };
 
@@ -21,20 +22,25 @@ export class RegisterSupportService implements IService<Input, Output> {
   constructor(
     private unburdenRepository: IUnburdenRepository,
     private supportRepository: ISupportRepository,
+    private commentRepository: ICommentRepository,
   ) {}
 
   async execute({ unburdenId, commentId, sessionId }: Input): Promise<Output> {
     if (!sessionId) throw new InvalidSessionIdException();
+    if (!unburdenId && !commentId) throw new Error("Requisição não permitida");
 
     if (unburdenId) {
       const registredUnburden =
         await this.unburdenRepository.findUnique(unburdenId);
+
       if (registredUnburden === null) throw new RegisterNotFoundException();
     }
 
     if (commentId) {
-      //confirma existencia do comentário
-      // caso comentário não exista, lançar exception de registro não encontrado
+      const registredComment =
+        await this.commentRepository.findUnique(commentId);
+
+      if (registredComment === null) throw new RegisterNotFoundException();
     }
 
     const data = {

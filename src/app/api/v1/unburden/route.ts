@@ -48,6 +48,6 @@ export async function GET(request: NextRequest) {
       total: response.total,
     });
   } catch (error) {
-    return NextResponse.json({ status: HttpStatusCode.INTERNAL_SERVER_ERROR });
+    return handleRequestError(error);
   }
 }
