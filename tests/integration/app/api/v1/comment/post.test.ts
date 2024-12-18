@@ -1,10 +1,9 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
-import { database } from "@/app/api/infra/database";
 import axios from "axios";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanDatabase } from "../../utils/clean-database.util";
 
-describe("support", () => {
+describe("comment", () => {
   beforeEach(async () => {
     await cleanDatabase();
   });
