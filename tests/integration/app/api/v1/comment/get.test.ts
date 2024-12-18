@@ -8,7 +8,7 @@ describe("comment", () => {
     await cleanDatabase();
   });
 
-  it.only("GET to /api/v1/comment should return http status code 200", async () => {
+  it("GET to /api/v1/comment should return http status code 200", async () => {
     const createUnburdenResponse = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
       {
