@@ -1,6 +1,7 @@
 import { Prisma, Unburden } from "@prisma/client";
 
 export interface UnburdenOutput extends Unburden {
+  commentsAmount: number;
   suportsAmount: number;
   supported: boolean;
 }

@@ -75,6 +75,10 @@ export default function Page({ params }: Props) {
   }
 
   function handleNewCommentRegistred(comment: CommentType) {
+    setUnburden({
+      ...unburden!,
+      comments_amount: unburden!.comments_amount + 1,
+    });
     setComments((currentState) => {
       return [comment, ...currentState];
     });

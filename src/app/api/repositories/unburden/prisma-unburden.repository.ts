@@ -11,7 +11,12 @@ import { database } from "@/app/api/infra/database";
 export class PrismaUnburdenRepository implements IUnburdenRepository {
   async create(data: Prisma.UnburdenCreateInput): Promise<UnburdenOutput> {
     const unburden = await database.unburden.create({ data });
-    return { ...unburden, suportsAmount: 0, supported: false };
+    return {
+      ...unburden,
+      suportsAmount: 0,
+      supported: false,
+      commentsAmount: 0,
+    };
   }
 
   async findMany({
@@ -31,7 +36,10 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
           },
         },
         _count: {
-          select: { supports: true },
+          select: {
+            supports: true,
+            comments: true,
+          },
         },
       },
       orderBy: {
@@ -42,6 +50,7 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     return unburdens.map((unburden) => {
       return {
         ...unburden,
+        commentsAmount: unburden._count.comments,
         suportsAmount: unburden._count.supports,
         supported: unburden.supports.length > 0,
       };
@@ -61,7 +70,10 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
           },
         },
         _count: {
-          select: { supports: true },
+          select: {
+            supports: true,
+            comments: true,
+          },
         },
       },
     });
@@ -70,6 +82,7 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
 
     return {
       ...unburden,
+      commentsAmount: unburden._count.comments,
       suportsAmount: unburden._count.supports,
       supported: unburden.supports.length > 0,
     };

@@ -2,6 +2,7 @@ import { UnburdenType } from "@/types/unburden.type";
 import { FaHashtag } from "react-icons/fa";
 import { Time } from "./Time";
 import { SupportsAmount } from "./SupportsAmount";
+import { CommentsAmount } from "./CommentsAmount";
 
 type UnburdenProps = {
   data: UnburdenType;
@@ -37,10 +38,16 @@ export function Unburden({ data, className }: UnburdenProps) {
         </div>
       </div>
       <p className="px-1 whitespace-pre-wrap">{data.content}</p>
-      <SupportsAmount
-        amount={data.supports_amount}
-        className="text-xs text-end text-zinc-400 mt-2"
-      />
+      <div className="text-sm mt-2 flex items-center justify-end gap-4">
+        <CommentsAmount
+          amount={data.comments_amount}
+          className="text-zinc-400"
+        />
+        <SupportsAmount
+          amount={data.supports_amount}
+          className="text-zinc-400"
+        />
+      </div>
     </div>
   );
 }
