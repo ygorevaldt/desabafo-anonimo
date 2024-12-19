@@ -11,7 +11,7 @@ export function SupportsAmount({ amount, className }: SupportsAmountProps) {
       ) : (
         <p className={`${className}`}>
           <span className="text-sm">{amount} </span>
-          {amount === 1 ? "demonstração" : "demostrações"} de apoio
+          {amount === 1 ? "apoio" : "apoios"}
         </p>
       )}
     </>
