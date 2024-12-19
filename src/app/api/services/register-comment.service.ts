@@ -16,6 +16,7 @@ export class RegisterCommentService implements IService<Input, Output> {
 
   async execute(data: Input): Promise<Output> {
     const comment = await this.commentRepository.create(data);
+    console.log("comment", comment);
     return { comment };
   }
 }

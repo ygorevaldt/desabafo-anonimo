@@ -33,8 +33,6 @@ export function UnburdenForm() {
       setIsLoading(false);
       setIsSended(true);
 
-      await successAlert("Desabafo registrado com sucesso");
-
       router.push("/unburdens");
     } catch (error) {
       errorAlert(

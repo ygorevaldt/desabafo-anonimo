@@ -30,8 +30,10 @@ export class RegisterSupportService implements IService<Input, Output> {
     if (!unburdenId && !commentId) throw new Error("Requisição não permitida");
 
     if (unburdenId) {
-      const registredUnburden =
-        await this.unburdenRepository.findUnique(unburdenId);
+      const registredUnburden = await this.unburdenRepository.findUnique({
+        id: unburdenId,
+        sessionId,
+      });
 
       if (registredUnburden === null) throw new RegisterNotFoundException();
     }

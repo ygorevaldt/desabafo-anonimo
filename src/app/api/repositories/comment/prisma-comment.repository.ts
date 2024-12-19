@@ -21,6 +21,9 @@ export class PrismaCommentRepository implements ICommentRepository {
       include: {
         subcomments,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return comments;

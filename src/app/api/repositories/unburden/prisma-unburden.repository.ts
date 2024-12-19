@@ -1,16 +1,15 @@
 import { Prisma, Unburden } from "@prisma/client";
 import {
   FindManyParams,
+  FindUniqueParams,
   IUnburdenRepository,
-  UnburdenWithSupports,
+  UnburdenOutput,
 } from "./unburden-repository.interface";
 
 import { database } from "@/app/api/infra/database";
 
 export class PrismaUnburdenRepository implements IUnburdenRepository {
-  async create(
-    data: Prisma.UnburdenCreateInput,
-  ): Promise<UnburdenWithSupports> {
+  async create(data: Prisma.UnburdenCreateInput): Promise<UnburdenOutput> {
     const unburden = await database.unburden.create({ data });
     return { ...unburden, suportsAmount: 0, supported: false };
   }
@@ -19,7 +18,7 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     page,
     take,
     sessionId,
-  }: FindManyParams): Promise<UnburdenWithSupports[]> {
+  }: FindManyParams): Promise<UnburdenOutput[]> {
     const skip = page === 0 ? page * take : (page - 1) * take;
 
     const unburdens = await database.unburden.findMany({
@@ -49,12 +48,31 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     });
   }
 
-  async findUnique(id: string): Promise<Unburden | null> {
+  async findUnique({
+    id,
+    sessionId,
+  }: FindUniqueParams): Promise<UnburdenOutput | null> {
     const unburden = await database.unburden.findUnique({
       where: { id },
+      include: {
+        supports: {
+          where: {
+            sessionId,
+          },
+        },
+        _count: {
+          select: { supports: true },
+        },
+      },
     });
 
-    return unburden;
+    if (unburden === null) return null;
+
+    return {
+      ...unburden,
+      suportsAmount: unburden._count.supports,
+      supported: unburden.supports.length > 0,
+    };
   }
 
   async total(): Promise<number> {

@@ -12,7 +12,7 @@ export function Footer() {
         z-10"
     >
       <div>
-        <p className="text-zinc-500">
+        <p className="text-zinc-500 text-center md:text-start">
           © Copyright 2024. Todos os direitos reservados
         </p>
       </div>

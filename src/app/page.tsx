@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { FaFeather } from "react-icons/fa";
-import { Istok_Web } from "next/font/google";
 
 import { DinamicPage } from "@/components/DinamicPage";
 import { UnburdenList } from "@/components/UnburdenList";
-
-const istokWeb = Istok_Web({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   return (

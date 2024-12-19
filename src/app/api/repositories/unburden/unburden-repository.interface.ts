@@ -1,6 +1,6 @@
 import { Prisma, Unburden } from "@prisma/client";
 
-export interface UnburdenWithSupports extends Unburden {
+export interface UnburdenOutput extends Unburden {
   suportsAmount: number;
   supported: boolean;
 }
@@ -11,9 +11,14 @@ export interface FindManyParams {
   sessionId: string;
 }
 
+export interface FindUniqueParams {
+  id: string;
+  sessionId: string;
+}
+
 export interface IUnburdenRepository {
-  create(data: Prisma.UnburdenCreateInput): Promise<UnburdenWithSupports>;
-  findMany(params: FindManyParams): Promise<UnburdenWithSupports[]>;
-  findUnique(id: string): Promise<Unburden | null>;
+  create(data: Prisma.UnburdenCreateInput): Promise<UnburdenOutput>;
+  findMany(params: FindManyParams): Promise<UnburdenOutput[]>;
+  findUnique(params: FindUniqueParams): Promise<UnburdenOutput | null>;
   total(): Promise<number>;
 }

@@ -6,12 +6,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Time } from "./Time";
 import { SupportsAmount } from "./SupportsAmount";
+import Link from "next/link";
+import { Unburden } from "./Unburden";
 
-type UnburdenProps = {
+type UnburdenListItemProps = {
   unburden: UnburdenType;
 };
 
-export function UnburdenListItem({ unburden }: UnburdenProps) {
+export function UnburdenListItem({ unburden }: UnburdenListItemProps) {
   const [data, setData] = useState(unburden);
 
   async function handleRegisterSupport() {
@@ -21,7 +23,7 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
         return;
       }
 
-      await axios.post("/api/v1/support", { unburdenId: unburden.id });
+      await axios.post("/api/v1/support", { unburden_id: unburden.id });
       setData((currentState) => {
         return {
           ...currentState,
@@ -35,36 +37,10 @@ export function UnburdenListItem({ unburden }: UnburdenProps) {
   }
 
   return (
-    <li>
-      <div
-        className="
-        flex flex-col gap-4
-        border-2 border-zinc-300 
-        rounded-lg p-4 pb-1
-        hover:shadow-md duration-300
-      "
-      >
-        <div className="md:flex md:flex-row flex flex-col-reverse justify-between items-start">
-          <h1
-            className="
-            text-xl font-bold text-rose-500
-            flex items-start gap-1 pt-4"
-          >
-            {<FaHashtag />} {data.title}
-          </h1>
-          <div className="w-full md:w-fit flex justify-end">
-            <Time
-              publishedAt={new Date(data.created_at)}
-              className="text-zinc-400 text-xs"
-            />
-          </div>
-        </div>
-        <p className="px-1 whitespace-pre-wrap">{data.content}</p>
-        <SupportsAmount
-          amount={data.supports_amount}
-          className="text-xs text-end text-zinc-400 mt-2"
-        />
-      </div>
+    <li key={unburden.id}>
+      <Link href={`/unburden/${data.id}`}>
+        <Unburden data={unburden} className="hover:scale-102 duration-300" />
+      </Link>
       <div className="flex justify-end mt-2">
         <SupportButton
           registerSupport={handleRegisterSupport}

@@ -8,11 +8,13 @@ import {
 type SupportButtonProps = {
   registerSupport: () => void;
   disabled: boolean;
+  className?: string;
 };
 
 export function SupportButton({
   registerSupport,
   disabled,
+  className,
 }: SupportButtonProps) {
   return (
     <>
@@ -24,10 +26,11 @@ export function SupportButton({
         <button
           title="Apoiar"
           className={`
-        group
-        special-rose-button 
-        flex items-center gap-2 
-      `}
+            group
+            special-rose-button 
+            flex items-center gap-2
+            ${className}
+          `}
           onClick={registerSupport}
         >
           <span className="text-red-500 group-hover:text-white duration-300">

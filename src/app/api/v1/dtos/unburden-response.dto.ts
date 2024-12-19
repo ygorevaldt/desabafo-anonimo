@@ -1,5 +1,5 @@
 import { Unburden } from "@prisma/client";
-import { UnburdenWithSupports } from "@/app/api/repositories/unburden/unburden-repository.interface";
+import { UnburdenOutput } from "@/app/api/repositories/unburden/unburden-repository.interface";
 
 export class UnburdenResponseDto {
   readonly id: string;
@@ -16,7 +16,7 @@ export class UnburdenResponseDto {
     createdAt,
     suportsAmount,
     supported,
-  }: UnburdenWithSupports) {
+  }: UnburdenOutput) {
     this.id = id;
     this.title = title;
     this.content = content;

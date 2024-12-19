@@ -1,7 +1,7 @@
 import { IService } from "./service.interface";
 import {
   IUnburdenRepository,
-  UnburdenWithSupports,
+  UnburdenOutput,
 } from "../repositories/unburden/unburden-repository.interface";
 
 type Input = {
@@ -10,7 +10,7 @@ type Input = {
 };
 
 type Output = {
-  unburdens: UnburdenWithSupports[];
+  unburdens: UnburdenOutput[];
   page: number;
   take: number;
   total: number;

@@ -39,7 +39,12 @@ describe("comment", () => {
     ]);
 
     const { status, data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment?unburden_id=${createdUnburden.id}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
+      {
+        params: {
+          unburden_id: createdUnburden.id,
+        },
+      },
     );
 
     expect(status).toEqual(HttpStatusCode.OK);
