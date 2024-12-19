@@ -104,7 +104,7 @@ export default function Page({ params }: Props) {
               handleNewCommentRegistred={handleNewCommentRegistred}
             />
             <section className="flex flex-col gap-2">
-              <h2 className="font-bold text-xl">Mensagens de Apoio</h2>
+              <h2 className="font-bold text-xl">Mensagens de apoio</h2>
               <CommentList comments={comments} />
             </section>
           </article>
