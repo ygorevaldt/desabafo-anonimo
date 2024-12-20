@@ -17,23 +17,13 @@ export function UnburdenListItem({ unburden }: UnburdenListItemProps) {
   const [data, setData] = useState(unburden);
 
   async function handleRegisterSupport() {
-    try {
-      if (unburden.supported) {
-        alert("Você já apoiou este desabafo.");
-        return;
-      }
-
-      await axios.post("/api/v1/support", { unburden_id: unburden.id });
-      setData((currentState) => {
-        return {
-          ...currentState,
-          supports_amount: currentState.supports_amount + 1,
-          supported: true,
-        };
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    setData((currentState) => {
+      return {
+        ...currentState,
+        supports_amount: currentState.supports_amount + 1,
+        supported: true,
+      };
+    });
   }
 
   return (
@@ -42,10 +32,7 @@ export function UnburdenListItem({ unburden }: UnburdenListItemProps) {
         <Unburden data={data} className="hover:scale-102 duration-300" />
       </Link>
       <div className="flex justify-end mt-2">
-        <SupportButton
-          registerSupport={handleRegisterSupport}
-          disabled={data.supported}
-        />
+        <SupportButton unburden={data} sumSupport={handleRegisterSupport} />
       </div>
     </li>
   );

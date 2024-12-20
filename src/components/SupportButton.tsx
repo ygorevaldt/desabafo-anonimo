@@ -1,24 +1,45 @@
-import {
-  PiHandHeartThin,
-  PiHeartBold,
-  PiHeartBreakFill,
-  PiHeartFill,
-} from "react-icons/pi";
+import { registerSupportToUnburden } from "@/http";
+import { UnburdenType } from "@/types";
+import { errorAlert, infoAlert } from "@/utils/alert";
+import { useState } from "react";
+import { PiHandHeartThin, PiHeartFill } from "react-icons/pi";
 
 type SupportButtonProps = {
-  registerSupport: () => void;
-  disabled: boolean;
+  unburden: UnburdenType;
   className?: string;
+  sumSupport: () => void;
 };
 
 export function SupportButton({
-  registerSupport,
-  disabled,
+  unburden,
   className,
+  sumSupport,
 }: SupportButtonProps) {
+  const [isDisabled, setIsDisabled] = useState(unburden.supported);
+
+  async function handleRegisterSupport() {
+    try {
+      if (unburden.supported) {
+        infoAlert("Você já apoiou este desabafo.");
+        return;
+      }
+
+      await registerSupportToUnburden(unburden);
+
+      sumSupport();
+
+      setIsDisabled(true);
+    } catch (error) {
+      errorAlert(
+        "Serviço indisponível, por favor tente novamente dentro de alguns minutos",
+      );
+      console.error(error);
+    }
+  }
+
   return (
     <>
-      {disabled ? (
+      {isDisabled ? (
         <span className="flex gap-1 items-center">
           Apoiado <PiHeartFill className="text-red-600" />
         </span>
@@ -31,7 +52,7 @@ export function SupportButton({
             flex items-center gap-2
             ${className}
           `}
-          onClick={registerSupport}
+          onClick={handleRegisterSupport}
         >
           <span className="text-red-500 group-hover:text-white duration-300">
             <PiHandHeartThin size={25} />

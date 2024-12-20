@@ -4,6 +4,7 @@ import { Loading } from "./Loading";
 import { errorAlert, successAlert } from "@/utils/alert";
 import axios from "axios";
 import { CommentType } from "@/types";
+import { registerComment } from "@/http";
 
 type CommentFormProps = {
   unburdenId: string;
@@ -22,24 +23,20 @@ export function CommentForm({
     setIsLoading(true);
 
     try {
-      const { data } = await axios({
-        method: "POST",
-        url: "/api/v1/comment",
-        data: {
-          unburden_id: unburdenId,
-          content,
-        },
+      const comment = await registerComment({
+        unburden_id: unburdenId,
+        content,
       });
 
       successAlert("Mensagem registrada com sucesso");
 
-      setContent("");
-      handleNewCommentRegistred(data);
+      handleNewCommentRegistred(comment);
     } catch (error) {
       errorAlert(
         "Serviço indisponível, tente novamente dentro de alguns minutos",
       );
     } finally {
+      setContent("");
       setIsLoading(false);
     }
   }

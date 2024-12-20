@@ -8,7 +8,8 @@ import { UnburdenType } from "@/types/unburden.type";
 import { UnburdenListItem } from "./UnburdenListItem";
 import { Loading } from "./Loading";
 import { LoadMoreButton } from "./LoadMoreButton";
-import { truncateSync } from "fs";
+import { errorAlert } from "@/utils/alert";
+import { fetchUnburdensList } from "@/http";
 
 export function UnburdenList() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,19 +20,26 @@ export function UnburdenList() {
   async function handleFetchMoreUnburdens() {
     try {
       setIsLoading(true);
+      console.log(page);
+
       const newPage = page + 1;
       setPage(newPage);
 
-      const response = await axios.get(`/api/v1/unburden?page=${newPage}`);
-      const updatedUnburdens = [...unburdens, ...response.data.unburdens];
+      const response = await fetchUnburdensList({
+        page: newPage,
+      });
+      const updatedUnburdens = [...unburdens, ...response.unburdens];
       setUnburdens(updatedUnburdens);
 
       const isRecoveredAllTheUnburdens =
-        response.data.total == updatedUnburdens.length;
+        response.total === updatedUnburdens.length;
       if (!isRecoveredAllTheUnburdens) return;
 
       setShowMoreUnburdensButton(false);
     } catch (error) {
+      errorAlert(
+        "Serviço indisponível, por favor tente novamente dentro de alguns minutos",
+      );
       console.error(error);
     } finally {
       setIsLoading(false);

@@ -1,11 +1,11 @@
 "use client";
 
-import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Loading } from "./Loading";
 import { useRouter } from "next/navigation";
 import { GiPartyPopper } from "react-icons/gi";
-import { errorAlert, successAlert } from "@/utils/alert";
+import { errorAlert } from "@/utils/alert";
+import { registerUnburden } from "@/http";
 
 export function UnburdenForm() {
   const router = useRouter();
@@ -24,13 +24,7 @@ export function UnburdenForm() {
     try {
       if (!unburden) return;
 
-      await axios({
-        method: "POST",
-        url: "/api/v1/unburden",
-        data: unburden,
-      });
-
-      setIsLoading(false);
+      await registerUnburden(unburden);
       setIsSended(true);
 
       router.push("/unburdens");
