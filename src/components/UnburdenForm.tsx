@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { GiPartyPopper } from "react-icons/gi";
 import { errorAlert } from "@/utils/alert";
 import { registerUnburden } from "@/http";
+import { generateIaSupportMessage } from "@/http/generate-ia-support-message";
+import { IaSupportMessage } from "./IaSupportMessage";
 
 export function UnburdenForm() {
   const router = useRouter();
@@ -16,6 +18,7 @@ export function UnburdenForm() {
     title: "",
     content: "",
   });
+  const [iaSupportMessage, setIaSupportMessage] = useState("");
 
   async function handleSubmitUnburden(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,10 +27,8 @@ export function UnburdenForm() {
     try {
       if (!unburden) return;
 
-      await registerUnburden(unburden);
+      await Promise.all([registerUnburden(unburden), generateIaMessage()]);
       setIsSended(true);
-
-      router.push("/unburdens");
     } catch (error) {
       errorAlert(
         "Serviço indisponível, tente novamente dentro de alguns minutos",
@@ -35,6 +36,16 @@ export function UnburdenForm() {
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function generateIaMessage() {
+    try {
+      const message = await generateIaSupportMessage(unburden.content);
+      setIaSupportMessage(message);
+    } catch (error) {
+      console.error(error);
+      router.push("/unburdens");
     }
   }
 
@@ -56,19 +67,20 @@ export function UnburdenForm() {
     <>
       {isSended ? (
         <div className="flex flex-col gap-3 justify-center items-center">
-          <h2
-            className="
-            font-bold text-xl 
-            flex items-end flex-nowrap gap-2
-          "
-          >
-            Desabafo registrado com sucesso
-            <GiPartyPopper size={30} className="text-rose-400" />
-          </h2>
-          <p className="text-zinc-500">
-            Só mais um momento, estamos te redirecinando para a página de
-            desabafos.
-          </p>
+          {iaSupportMessage ? (
+            <IaSupportMessage content={iaSupportMessage} />
+          ) : (
+            <>
+              <h2 className="font-bold text-2xl flex items-end flex-nowrap gap-2">
+                Desabafo registrado com sucesso
+                <GiPartyPopper size={30} className="text-rose-400" />
+              </h2>
+              <p className="text-zinc-500">
+                Só mais um momento, estamos te redirecinando para a página de
+                desabafos.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <form
@@ -101,7 +113,7 @@ export function UnburdenForm() {
             <textarea
               className="
               m-auto p-2 w-full
-              border-2 border-zinc-300 rounded-lg 
+              border-2 border-zinc-300 rounded-lg
               focus:outline-none focus:shadow-md
             "
               rows={15}
