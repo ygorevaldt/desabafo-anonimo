@@ -28,7 +28,7 @@ export function UnburdenListItem({ unburden }: UnburdenListItemProps) {
 
   return (
     <li key={unburden.id}>
-      <Link href={`/unburden/${data.id}`}>
+      <Link href={`/unburden/${data.id}`} title="Acessar">
         <Unburden data={data} className="hover:scale-102 duration-300" />
       </Link>
       <div className="flex justify-end mt-2">
