@@ -72,7 +72,7 @@ export default function Page({ params }: Props) {
       {unburden !== null && (
         <div className="flex flex-col gap-10">
           <div className=" md:bg-zinc-50 md:p-4 rounded-lg md:shadow-md">
-            <Unburden data={unburden} />
+            <Unburden data={unburden} showSensitiveButton={true} />
             <div className="flex justify-end mt-2">
               <SupportButton
                 sumSupport={handleRegisterSupport}

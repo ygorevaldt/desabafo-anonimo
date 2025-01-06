@@ -20,7 +20,6 @@ export function UnburdenList() {
   async function handleFetchMoreUnburdens() {
     try {
       setIsLoading(true);
-      console.log(page);
 
       const newPage = page + 1;
       setPage(newPage);

@@ -9,12 +9,14 @@ export class UnburdenResponseDto {
   readonly supports_amount?: number;
   readonly comments_amount?: number;
   readonly supported?: boolean;
+  readonly sensitive_content?: boolean | null;
 
   constructor({
     id,
     title,
     content,
     createdAt,
+    sensitiveContent,
     suportsAmount,
     commentsAmount,
     supported,
@@ -22,6 +24,7 @@ export class UnburdenResponseDto {
     this.id = id;
     this.title = title;
     this.content = content;
+    this.sensitive_content = sensitiveContent;
     this.created_at = createdAt;
     this.supports_amount = suportsAmount;
     this.comments_amount = commentsAmount;

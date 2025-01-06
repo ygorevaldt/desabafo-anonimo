@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
       page: Number(page),
       sessionId,
     });
+
     const unburdens = response.unburdens.map((item) => {
       return new UnburdenResponseDto(item);
     });
@@ -48,6 +49,7 @@ export async function GET(request: NextRequest) {
       total: response.total,
     });
   } catch (error) {
+    console.error(error);
     return handleRequestError(error);
   }
 }

@@ -6,4 +6,5 @@ export type UnburdenType = {
   supports_amount: number;
   comments_amount: number;
   supported: boolean;
+  sensitive_content: boolean;
 };

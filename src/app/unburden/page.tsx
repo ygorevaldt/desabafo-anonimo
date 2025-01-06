@@ -4,7 +4,7 @@ import { UnburdenForm } from "@/components/UnburdenForm";
 export default function Unburden() {
   return (
     <DinamicPage>
-      <main className="h-screen">
+      <main>
         <UnburdenForm />
       </main>
     </DinamicPage>

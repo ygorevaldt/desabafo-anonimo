@@ -22,6 +22,7 @@ model Unburden {
   id String @id @map("id") @db.Uuid @default(uuid())
   title String @map("titulo") @db.VarChar(50)
   content String @map("conteudo") @db.VarChar(2500)
+  sensitiveContent Boolean? @map("conteudo_sensivel") @default(false)
   createdAt DateTime @map("created_at") @db.Timestamp @default(now())
   supports Support[]
   comments Comment[]
