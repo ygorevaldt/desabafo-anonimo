@@ -58,9 +58,7 @@ export function Unburden({
           </div>
           {!showSensitiveContent && (
             <div className="absolute inset-[-6px] text-lg flex items-center justify-center bg-white bg-opacity-60 text-black">
-              <p className="text-zinc-800 bg-white bg-opacity-60 p-1 rounded-lg ">
-                Conteúdo sensível
-              </p>
+              <p className="text-zinc-950">Conteúdo sensível</p>
             </div>
           )}
           {showSensitiveButton && (
