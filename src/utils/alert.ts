@@ -5,7 +5,7 @@ const toast = Swal.mixin({
   position: "top-end",
   showConfirmButton: false,
   showCloseButton: true,
-  timer: 2000,
+  timer: 3000,
   timerProgressBar: true,
   customClass: {
     title: "notification-service-title",

@@ -45,4 +45,16 @@ describe("unburden", () => {
       }
     }
   });
+
+  it("POST to /api/v1/unburden should return http status code 401", async () => {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`, {
+        title: "Desabafo",
+        content:
+          "Este é apenas um desabado com muitos termos sensívels: matar, roubar, se cortar, suicídio, morte, me queimar",
+      });
+    } catch (error: any) {
+      expect(error.status).toEqual(HttpStatusCode.UNAUTHORIZED);
+    }
+  });
 });

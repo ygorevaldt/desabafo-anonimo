@@ -17,6 +17,7 @@ export class PrismaCommentRepository implements ICommentRepository {
       where: {
         subcommentId: null,
         unburdenId,
+        sensitiveContent: false,
       },
       include: {
         subcomments,

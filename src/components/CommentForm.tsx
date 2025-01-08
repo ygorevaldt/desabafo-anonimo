@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { FaHeartbeat } from "react-icons/fa";
 import { Loading } from "./Loading";
 import { errorAlert, successAlert } from "@/utils/alert";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { CommentType } from "@/types";
 import { registerComment } from "@/http";
 
@@ -32,6 +32,10 @@ export function CommentForm({
 
       handleNewCommentRegistred(comment);
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        errorAlert("O conteúdo deste cometário não pode ser publicado");
+        return;
+      }
       errorAlert(
         "Serviço indisponível, tente novamente dentro de alguns minutos",
       );

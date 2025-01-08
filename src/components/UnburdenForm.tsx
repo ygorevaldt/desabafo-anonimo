@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { GiPartyPopper } from "react-icons/gi";
 import { errorAlert } from "@/utils/alert";
 import { registerUnburden } from "@/http";
+import axios from "axios";
 
 export function UnburdenForm() {
   const router = useRouter();
@@ -29,6 +30,10 @@ export function UnburdenForm() {
 
       router.push("/unburdens");
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        errorAlert("O conteúdo deste desabafo não pode ser publicado");
+        return;
+      }
       errorAlert(
         "Serviço indisponível, tente novamente dentro de alguns minutos",
       );

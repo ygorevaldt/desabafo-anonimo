@@ -5,6 +5,7 @@ import {
   InvalidSessionIdException,
   RegisterNotFoundException,
 } from "../services/exceptions";
+import { UnauthorizedContentException } from "../services/exceptions/unauthorized-content.exception";
 
 export function handleRequestError(error: any) {
   if (process.env.NODE_ENV !== "production") {
@@ -27,7 +28,10 @@ export function handleRequestError(error: any) {
     );
   }
 
-  if (error instanceof InvalidSessionIdException) {
+  if (
+    error instanceof InvalidSessionIdException ||
+    error instanceof UnauthorizedContentException
+  ) {
     return NextResponse.json(
       { message: error.message },
       { status: HttpStatusCode.UNAUTHORIZED },

@@ -38,7 +38,11 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
         _count: {
           select: {
             supports: true,
-            comments: true,
+            comments: {
+              where: {
+                sensitiveContent: false,
+              },
+            },
           },
         },
       },
@@ -72,7 +76,11 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
         _count: {
           select: {
             supports: true,
-            comments: true,
+            comments: {
+              where: {
+                sensitiveContent: false,
+              },
+            },
           },
         },
       },

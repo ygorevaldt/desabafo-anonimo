@@ -33,6 +33,7 @@ model Unburden {
 model Comment {
   id String @id @map("id") @db.Uuid @default(uuid())
   content String @map("conteudo") @db.VarChar(1500)
+  sensitiveContent Boolean? @map("conteudo_sensivel") @default(false)
   createdAt DateTime @map("created_at") @db.Timestamp @default(now())
   unburdenId String? @map("id_desabafo") @db.Uuid
   unburden Unburden? @relation(fields: [unburdenId], references: [id])
