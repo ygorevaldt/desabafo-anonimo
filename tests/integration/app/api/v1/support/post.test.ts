@@ -1,7 +1,9 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
 import { database } from "@/app/api/infra/database";
-import axios from "axios";
 import { beforeEach, describe, expect, it } from "vitest";
+import * as unburdenRoute from "@/app/api/v1/unburden/route";
+import * as supportRoute from "@/app/api/v1/support/route";
+import { testClient } from "../../utils/test-client";
 
 describe("support", () => {
   beforeEach(async () => {
@@ -10,58 +12,44 @@ describe("support", () => {
   });
 
   it("POST to /api/v1/support should return http status code 201", async () => {
-    const createUnburdenResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
-      },
-    );
+      });
 
-    const cookies = createUnburdenResponse.headers["set-cookie"];
-    const sessionId = cookies![0]
-      .split(";")
-      .find((item) => item.includes("session_id"))
-      ?.split("=")[1];
+    const unburden = unburdenResponse.body;
+    const sessionId = "valid-test-session-id";
 
-    const unburden = createUnburdenResponse.data;
-
-    const createSupportResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
-      {
+    const createSupportResponse = await testClient(supportRoute)
+      .post("/api/v1/support")
+      .set("Cookie", `session_id=${sessionId}`)
+      .send({
         unburden_id: unburden.id,
-      },
-      {
-        headers: {
-          Cookie: `session_id=${sessionId}`,
-        },
-      },
-    );
+      });
 
-    const { status, data } = createSupportResponse;
-
-    expect(status).toEqual(HttpStatusCode.CREATED);
-    expect(data).toHaveProperty("id");
+    expect(createSupportResponse.status).toEqual(HttpStatusCode.CREATED);
+    expect(createSupportResponse.body).toHaveProperty("id");
   });
 
   it("POST to /api/v1/support should throw error with http status code 401", async () => {
-    const createUnburdenResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
-      },
-    );
+      });
 
-    const unburden = createUnburdenResponse.data;
+    const unburden = unburdenResponse.body;
 
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`, {
+    const response = await testClient(supportRoute)
+      .post("/api/v1/support")
+      .send({
         unburden_id: unburden.id,
       });
-    } catch (error: any) {
-      expect(error.status).toEqual(401);
-    }
+
+    expect(response.status).toEqual(401);
   });
 
   it("POST to /api/v1/support should throw error with http status code 400", async () => {
@@ -72,20 +60,13 @@ describe("support", () => {
       { unburden_id: null },
     ];
 
-    const headers = {
-      Cookie: `session_id=${sessionId}`,
-    };
-
     for (const body of invalidRequestsBody) {
-      try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/support`,
-          body,
-          { headers },
-        );
-      } catch (error: any) {
-        expect(error.status).toEqual(400);
-      }
+      const response = await testClient(supportRoute)
+        .post("/api/v1/support")
+        .set("Cookie", `session_id=${sessionId}`)
+        .send(body);
+
+      expect(response.status).toEqual(400);
     }
   });
 });

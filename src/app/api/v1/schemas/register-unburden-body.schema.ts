@@ -28,4 +28,5 @@ export const registerUnburdenBodySchema = zod.object({
     })
     .min(CONTENT_MIN_LENGTH, CONTENT_MIN_LENGTH_MESSAGE)
     .max(CONTENT_MAX_LENGTH, CONTENT_MAX_LENGTH_MESSAGE),
+  wantsAiComfort: zod.boolean().optional(),
 });

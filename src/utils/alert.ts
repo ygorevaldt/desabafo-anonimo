@@ -36,3 +36,18 @@ export async function infoAlert(message: string) {
     title: message,
   });
 }
+
+export async function confirmReportAlert(): Promise<boolean> {
+  const result = await Swal.fire({
+    title: "Denunciar conteúdo?",
+    text: "Se você acredita que este desabafo viola as regras da comunidade (ódio, ameaça, apologia a crimes), clique em confirmar.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#f43f5e",
+    cancelButtonColor: "#71717a",
+    confirmButtonText: "Sim, denunciar",
+    cancelButtonText: "Cancelar",
+  });
+
+  return result.isConfirmed;
+}

@@ -1,7 +1,9 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
-import axios from "axios";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanDatabase } from "../../utils/clean-database.util";
+import * as unburdenRoute from "@/app/api/v1/unburden/route";
+import * as commentRoute from "@/app/api/v1/comment/route";
+import { testClient } from "../../utils/test-client";
 
 describe("comment", () => {
   beforeEach(async () => {
@@ -9,28 +11,24 @@ describe("comment", () => {
   });
 
   it("POST to /api/v1/comment should return http status code 201", async () => {
-    const createUnburdenResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
-      },
-    );
+      });
 
-    const createdUnburden = createUnburdenResponse.data;
+    const createdUnburden = unburdenResponse.body;
 
-    const createCommentResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-      {
+    const createCommentResponse = await testClient(commentRoute)
+      .post("/api/v1/comment")
+      .send({
         unburden_id: createdUnburden.id,
         content: "Any content with 2500 caracteres in max",
-      },
-    );
+      });
 
-    const { status, data } = createCommentResponse;
-
-    expect(status).toEqual(HttpStatusCode.CREATED);
-    expect(data).toHaveProperty("id");
+    expect(createCommentResponse.status).toEqual(HttpStatusCode.CREATED);
+    expect(createCommentResponse.body).toHaveProperty("id");
   });
 
   it("POST to /api/v1/comment should throw error with http status code 400", async () => {
@@ -43,36 +41,32 @@ describe("comment", () => {
     ];
 
     for (const body of invalidRequestsBody) {
-      try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-          body,
-        );
-      } catch (error: any) {
-        expect(error.status).toEqual(HttpStatusCode.BAD_REQUEST);
-      }
+      const response = await testClient(commentRoute)
+        .post("/api/v1/comment")
+        .send(body);
+
+      expect(response.status).toEqual(HttpStatusCode.BAD_REQUEST);
     }
   });
 
   it("POST to /api/v1/comment should return http status code 401", async () => {
-    const createUnburdenResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
-      },
-    );
+      });
 
-    const createdUnburden = createUnburdenResponse.data;
+    const createdUnburden = unburdenResponse.body;
 
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`, {
+    const response = await testClient(commentRoute)
+      .post("/api/v1/comment")
+      .send({
         unburden_id: createdUnburden.id,
         content:
           "Este é apenas um comentário com muitos termos sensívels: matar, roubar, se cortar, suicídio, morte, me queimar",
       });
-    } catch (error: any) {
-      expect(error.status).toEqual(HttpStatusCode.UNAUTHORIZED);
-    }
+
+    expect(response.status).toEqual(HttpStatusCode.UNAUTHORIZED);
   });
 });

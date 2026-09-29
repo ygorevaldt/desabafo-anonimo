@@ -3,6 +3,7 @@ import axios from "axios";
 type RegisterUnburdenParams = {
   title: string;
   content: string;
+  wantsAiComfort?: boolean;
 };
 
 export async function registerUnburden(data: RegisterUnburdenParams) {

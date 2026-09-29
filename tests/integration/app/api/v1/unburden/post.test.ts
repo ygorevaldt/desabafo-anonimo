@@ -1,7 +1,8 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
 import { database } from "@/app/api/infra/database";
-import axios from "axios";
 import { beforeEach, describe, expect, it } from "vitest";
+import * as unburdenRoute from "@/app/api/v1/unburden/route";
+import { testClient } from "../../utils/test-client";
 
 describe("unburden", () => {
   const unburden = {
@@ -15,10 +16,9 @@ describe("unburden", () => {
   });
 
   it("POST to /api/v1/unburden should return http status code 201", async () => {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      unburden,
-    );
+    const response = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send(unburden);
 
     expect(response.status).toBe(HttpStatusCode.CREATED);
   });
@@ -35,26 +35,23 @@ describe("unburden", () => {
     ];
 
     for (const body of someInvalidRequestsBody) {
-      try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-          body,
-        );
-      } catch (error: any) {
-        expect(error.status).toEqual(400);
-      }
+      const response = await testClient(unburdenRoute)
+        .post("/api/v1/unburden")
+        .send(body);
+
+      expect(response.status).toEqual(400);
     }
   });
 
   it("POST to /api/v1/unburden should return http status code 401", async () => {
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`, {
+    const response = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content:
           "Este é apenas um desabado com muitos termos sensívels: matar, roubar, se cortar, suicídio, morte, me queimar",
       });
-    } catch (error: any) {
-      expect(error.status).toEqual(HttpStatusCode.UNAUTHORIZED);
-    }
+
+    expect(response.status).toEqual(HttpStatusCode.UNAUTHORIZED);
   });
 });

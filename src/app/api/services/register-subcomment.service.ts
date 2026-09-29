@@ -2,7 +2,7 @@ import { Comment } from "@prisma/client";
 import { IService } from "./service.interface";
 import { ICommentRepository } from "../repositories/comment/comment-repository.interface";
 import { RegisterNotFoundException } from "./exceptions";
-import { checkContentTemperature, checkSensitiveContent } from "../utils";
+import { AiModerationService } from "./ai-moderation.service";
 import { UnauthorizedContentException } from "./exceptions/unauthorized-content.exception";
 
 type Input = {
@@ -15,11 +15,21 @@ type Output = {
 };
 
 export class RegisterSubcommentService implements IService<Input, Output> {
-  constructor(private commentRepository: ICommentRepository) {}
+  private moderationService: AiModerationService;
+
+  constructor(
+    private commentRepository: ICommentRepository,
+    moderationService?: AiModerationService
+  ) {
+    this.moderationService = moderationService ?? new AiModerationService();
+  }
 
   async execute({ commentId, content }: Input): Promise<Output> {
-    const contentTemperature = checkContentTemperature(content);
-    if (contentTemperature === "red") throw new UnauthorizedContentException();
+    const moderation = await this.moderationService.moderate(content);
+
+    if (moderation.status === "BLOCKED") {
+      throw new UnauthorizedContentException();
+    }
 
     const registredComment = await this.commentRepository.findUnique(commentId);
     if (registredComment === null) throw new RegisterNotFoundException();
@@ -27,8 +37,9 @@ export class RegisterSubcommentService implements IService<Input, Output> {
     const subcomment = await this.commentRepository.create({
       subcommentId: commentId,
       content,
-      sensitiveContent: checkSensitiveContent(content),
+      sensitiveContent: moderation.isSensitive,
     });
+
     return { subcomment };
   }
 }

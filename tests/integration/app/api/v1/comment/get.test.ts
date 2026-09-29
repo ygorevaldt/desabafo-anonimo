@@ -1,7 +1,9 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
-import axios from "axios";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanDatabase } from "../../utils/clean-database.util";
+import * as unburdenRoute from "@/app/api/v1/unburden/route";
+import * as commentRoute from "@/app/api/v1/comment/route";
+import { testClient } from "../../utils/test-client";
 
 describe("comment", () => {
   beforeEach(async () => {
@@ -9,45 +11,31 @@ describe("comment", () => {
   });
 
   it("GET to /api/v1/comment should return http status code 200", async () => {
-    const createUnburdenResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/unburden`,
-      {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
-      },
-    );
-    const createdUnburden = createUnburdenResponse.data;
+      });
+
+    const createdUnburden = unburdenResponse.body;
 
     const bodyToCreateComment = {
       unburden_id: createdUnburden.id,
       content: "Any content with 2500 caracteres in max",
     };
 
-    await Promise.all([
-      axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-        bodyToCreateComment,
-      ),
-      axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-        bodyToCreateComment,
-      ),
-      axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-        bodyToCreateComment,
-      ),
-    ]);
+    const commentClient = testClient(commentRoute);
 
-    const { status, data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/comment`,
-      {
-        params: {
-          unburden_id: createdUnburden.id,
-        },
-      },
+    await commentClient.post("/api/v1/comment").send(bodyToCreateComment);
+    await commentClient.post("/api/v1/comment").send(bodyToCreateComment);
+    await commentClient.post("/api/v1/comment").send(bodyToCreateComment);
+
+    const response = await commentClient.get(
+      `/api/v1/comment?unburden_id=${createdUnburden.id}`,
     );
 
-    expect(status).toEqual(HttpStatusCode.OK);
-    expect(data.comments.length).toEqual(3);
+    expect(response.status).toEqual(HttpStatusCode.OK);
+    expect(response.body.comments.length).toEqual(3);
   });
 });
