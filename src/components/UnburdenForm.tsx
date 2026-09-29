@@ -1,48 +1,59 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Loading } from "./Loading";
 import { useRouter } from "next/navigation";
-import { GiPartyPopper } from "react-icons/gi";
-import { FaHeart, FaShieldAlt, FaPhoneAlt } from "react-icons/fa";
-import { errorAlert } from "@/utils/alert";
+import { FaHeart, FaShieldAlt, FaPhoneAlt, FaFeather, FaSpinner } from "react-icons/fa";
+import { errorAlert, successAlert } from "@/utils/alert";
 import { registerUnburden } from "@/http";
 import axios from "axios";
+import { useAppDispatch } from "@/store/hooks";
+import { addNewUnburden } from "@/store/slices/feedSlice";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
 
 export function UnburdenForm() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isSended, setIsSended] = useState(false);
+  const [isSent, setIsSent] = useState(false);
   const [wantsAiComfort, setWantsAiComfort] = useState(true);
-  const [unburden, setUnburden] = useState<{ title: string; content: string }>({
+  const [unburden, setUnburden] = useState({
     title: "",
     content: "",
   });
 
   async function handleSubmitUnburden(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!unburden.title.trim() || !unburden.content.trim()) return;
+
     setIsLoading(true);
 
     try {
-      if (!unburden) return;
-
-      await registerUnburden({
-        ...unburden,
+      const created = await registerUnburden({
+        title: unburden.title.trim(),
+        content: unburden.content.trim(),
         wantsAiComfort,
       });
-      setIsSended(true);
 
+      if (created) {
+        dispatch(addNewUnburden(created));
+      }
+
+      setIsSent(true);
+      successAlert("Seu desabafo foi publicado com acolhimento.");
       router.push("/unburdens");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         errorAlert(
-          "Não foi possível publicar. O conteúdo viola nossas diretrizes de segurança (apologia à violência, ódio, abuso ou conteúdo ilegal)."
+          "Não foi possível publicar. O conteúdo viola as diretrizes de segurança da comunidade (apologia ao crime, ódio, abuso ou violência).",
         );
         return;
       }
       errorAlert(
-        "Serviço indisponível, tente novamente dentro de alguns minutos"
+        "Serviço temporariamente indisponível. Por favor, tente novamente.",
       );
       console.error(error);
     } finally {
@@ -50,133 +61,159 @@ export function UnburdenForm() {
     }
   }
 
-  function handleNewTitleValue(event: ChangeEvent<HTMLInputElement>) {
-    setUnburden((currentState) => {
-      return { ...currentState, title: event.target.value };
-    });
+  function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
+    setUnburden((prev) => ({ ...prev, title: event.target.value }));
   }
 
-  function handleNewContentValue(event: ChangeEvent<HTMLTextAreaElement>) {
-    const contentWithLineBreaks = event.target.value.replace(/\n/g, "\r\n");
-
-    setUnburden((currentState) => {
-      return { ...currentState, content: contentWithLineBreaks };
-    });
+  function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setUnburden((prev) => ({ ...prev, content: event.target.value }));
   }
 
   return (
-    <>
-      {isSended ? (
-        <div className="flex flex-col gap-3 justify-center items-center">
-          <h2
-            className="
-            font-bold text-xl 
-            flex items-end flex-nowrap gap-2
-          "
-          >
-            Desabafo registrado com sucesso
-            <GiPartyPopper size={30} className="text-rose-400" />
-          </h2>
-          <p className="text-zinc-500">
-            Só mais um momento, estamos te redirecionando para a página de
-            desabafos.
-          </p>
-        </div>
-      ) : (
-        <form
-          onSubmit={handleSubmitUnburden}
-          className="flex flex-col items-end gap-4 w-full"
-        >
-          {/* Banner de apoio de emergência CVV */}
-          <div className="w-full bg-rose-50 border border-rose-200 rounded-lg p-4 text-sm text-zinc-700 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FaPhoneAlt className="text-rose-500 flex-shrink-0" />
-              <span>
-                <strong>Precisa de ajuda agora?</strong> O <strong>CVV (Centro de Valorização da Vida)</strong> oferece escuta empática e gratuita 24h.
-              </span>
-            </div>
-            <a
-              href="tel:188"
-              className="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-4 py-1.5 rounded-full text-xs transition duration-200 whitespace-nowrap self-end md:self-auto"
-            >
-              Ligue 188 (Grátis)
-            </a>
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-6">
+      {/* Banner de Emergência CVV */}
+      <div className="w-full bg-rose-500/10 border border-rose-300/40 dark:border-rose-900/50 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-xs text-foreground">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0">
+            <FaPhoneAlt className="text-rose-600 dark:text-rose-400 text-xs" />
           </div>
+          <div>
+            <p className="font-semibold text-rose-700 dark:text-rose-300">
+              Precisa de acolhimento agora?
+            </p>
+            <p className="text-muted-foreground">
+              O <strong>CVV</strong> oferece escuta empática e sigilosa 24h por dia.
+            </p>
+          </div>
+        </div>
+        <a
+          href="https://cvv.org.br"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="self-end sm:self-auto bg-rose-500 hover:bg-rose-600 text-white font-semibold px-4 py-2 rounded-full text-xs transition duration-200 shadow-soft"
+        >
+          Ligue 188 (Grátis)
+        </a>
+      </div>
 
-          <section className="flex flex-col gap-4 w-full">
-            <header>
-              <h2 className="text-2xl font-semibold">
-                Seu desabafo é importante, escreva o que está sentindo:
-              </h2>
-              <p className="text-zinc-400 text-md">
-                Lembre-se: este é um espaço anônimo. Evite compartilhar
-                informações pessoais identificáveis.
+      {/* Main Form Card */}
+      <form
+        onSubmit={handleSubmitUnburden}
+        className="bg-card border border-border/80 rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col gap-6"
+      >
+        <header className="flex flex-col gap-1.5 border-b border-border/60 pb-4">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <FaFeather className="text-rose-500 w-5 h-5" />
+            <span>Coloque para fora o que está sentindo</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Seu desabafo é 100% anônimo. Não compartilhe senhas ou dados que te identifiquem.
+          </p>
+        </header>
+
+        {/* Title Input */}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center text-xs font-medium text-foreground">
+            <label htmlFor="unburden-title">Título do desabafo</label>
+            <span
+              className={`text-[11px] ${
+                unburden.title.length > 45 ? "text-amber-500 font-semibold" : "text-muted-foreground"
+              }`}
+            >
+              {unburden.title.length}/50
+            </span>
+          </div>
+          <Input
+            id="unburden-title"
+            type="text"
+            placeholder="Ex: Não consigo me concentrar hoje..."
+            value={unburden.title}
+            onChange={handleTitleChange}
+            required
+            maxLength={50}
+            minLength={5}
+            className="rounded-2xl"
+          />
+        </div>
+
+        {/* Content Textarea */}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center text-xs font-medium text-foreground">
+            <label htmlFor="unburden-content">Escreva sua história ou sentimento</label>
+            <span
+              className={`text-[11px] ${
+                unburden.content.length > 2400 ? "text-amber-500 font-semibold" : "text-muted-foreground"
+              }`}
+            >
+              {unburden.content.length}/2500
+            </span>
+          </div>
+          <Textarea
+            id="unburden-content"
+            rows={8}
+            placeholder="Fale com sinceridade sobre o que está em seu coração..."
+            value={unburden.content}
+            onChange={handleContentChange}
+            required
+            maxLength={2500}
+            minLength={25}
+            className="rounded-2xl resize-y"
+          />
+        </div>
+
+        {/* AI Comfort Toggle */}
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/60 border border-border/80">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0 mt-0.5">
+              <FaHeart className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                Acolhimento imediato por IA
               </p>
-            </header>
-            <input
-              className="
-              p-2 border-2 border-zinc-300 rounded-lg
-              focus:outline-none focus:shadow-md
-            "
-              type="text"
-              placeholder="Digite o título para seu desabafo"
-              value={unburden.title}
-              onChange={handleNewTitleValue}
-              required
-              maxLength={50}
-              minLength={5}
-            />
-            <textarea
-              className="
-              m-auto p-2 w-full
-              border-2 border-zinc-300 rounded-lg 
-              focus:outline-none focus:shadow-md
-            "
-              rows={12}
-              placeholder="Escreva seu desabafo aqui:"
-              value={unburden.content}
-              onChange={handleNewContentValue}
-              required
-              maxLength={2500}
-              minLength={25}
-            ></textarea>
-
-            {/* Opção de conforto com IA */}
-            <div className="flex items-center justify-between p-3 border border-zinc-200 rounded-lg bg-zinc-50">
-              <label
-                htmlFor="wants-ai-comfort"
-                className="flex items-center gap-2.5 cursor-pointer text-sm font-medium text-zinc-700"
-              >
-                <FaHeart className="text-rose-400" />
-                <span>
-                  Receber uma mensagem inicial de apoio e acolhimento gerada por IA
-                </span>
-              </label>
-              <input
-                id="wants-ai-comfort"
-                type="checkbox"
-                checked={wantsAiComfort}
-                onChange={(e) => setWantsAiComfort(e.target.checked)}
-                className="w-4 h-4 text-rose-500 rounded focus:ring-rose-400 cursor-pointer"
-              />
+              <p className="text-xs text-muted-foreground">
+                Receba uma mensagem carinhosa de escuta logo após publicar.
+              </p>
             </div>
+          </div>
+          <Switch
+            checked={wantsAiComfort}
+            onCheckedChange={setWantsAiComfort}
+            id="wants-ai-comfort"
+          />
+        </div>
 
-            {/* Aviso de moderação ativa */}
-            <div className="flex items-center gap-2 text-xs text-zinc-500 px-1">
-              <FaShieldAlt className="text-emerald-500" />
-              <span>
-                Espaço protegido por moderação de segurança por IA contra crimes, assédio e apologia à violência.
-              </span>
-            </div>
-          </section>
+        {/* Moderation Notice */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+          <FaShieldAlt className="text-emerald-500 w-3.5 h-3.5 shrink-0" />
+          <span>
+            Espaço protegido por moderação segura contra abusos, ofensas e apologia à violência.
+          </span>
+        </div>
 
-          <button type="submit" className="rose-button">
-            Enviar
-          </button>
-        </form>
-      )}
-
-      {isLoading && <Loading />}
-    </>
+        {/* Submit Button */}
+        <div className="flex justify-end pt-2">
+          <Button
+            type="submit"
+            variant="warm"
+            size="lg"
+            disabled={isLoading || unburden.title.length < 5 || unburden.content.length < 25}
+            className="w-full sm:w-auto font-semibold gap-2 shadow-soft hover:shadow-soft-md"
+          >
+            {isLoading ? (
+              <>
+                <FaSpinner className="w-4 h-4 animate-spin" />
+                <span>Publicando...</span>
+              </>
+            ) : (
+              <>
+                <FaFeather className="w-4 h-4" />
+                <span>Publicar desabafo</span>
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

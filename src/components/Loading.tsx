@@ -1,8 +1,8 @@
 export function Loading() {
   return (
-    <div className="fixed inset-0 bg-white bg-opacity-55 flex justify-center items-center z-50">
-      <div className="spinner-border animate-spin inline-block w-16 h-16 border-4 rounded-full border-t-rose-500 border-r-transparent border-b-transparent border-l-rose-500">
-        <span className="visually-hidden"></span>
+    <div className="fixed inset-0 bg-background/70 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity">
+      <div className="relative flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full border-4 border-rose-500/20 border-t-rose-500 animate-spin" />
       </div>
     </div>
   );

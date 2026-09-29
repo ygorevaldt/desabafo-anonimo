@@ -1,65 +1,87 @@
+"use client";
+
 import { registerSupportToUnburden } from "@/http";
 import { UnburdenType } from "@/types";
 import { errorAlert, infoAlert } from "@/utils/alert";
 import { useState } from "react";
-import { PiHandHeartThin, PiHeartFill } from "react-icons/pi";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useAppDispatch } from "@/store/hooks";
+import { optimisticSupport } from "@/store/slices/feedSlice";
+import { optimisticSupportActive } from "@/store/slices/activeUnburdenSlice";
 
 type SupportButtonProps = {
   unburden: UnburdenType;
   className?: string;
-  sumSupport: () => void;
+  sumSupport?: () => void;
 };
 
 export function SupportButton({
   unburden,
-  className,
+  className = "",
   sumSupport,
 }: SupportButtonProps) {
-  const [isDisabled, setIsDisabled] = useState(unburden.supported);
+  const dispatch = useAppDispatch();
+  const [isSupported, setIsSupported] = useState(unburden.supported);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleRegisterSupport() {
+    if (isSupported) {
+      infoAlert("Você já apoiou este desabafo.");
+      return;
+    }
+
     try {
-      if (unburden.supported) {
-        infoAlert("Você já apoiou este desabafo.");
-        return;
-      }
+      setIsLoading(true);
+
+      // Optimistic update in local state and Redux store
+      setIsSupported(true);
+      dispatch(optimisticSupport(unburden.id));
+      dispatch(optimisticSupportActive());
+      sumSupport?.();
 
       await registerSupportToUnburden(unburden);
-
-      sumSupport();
-
-      setIsDisabled(true);
     } catch (error) {
+      setIsSupported(false);
       errorAlert(
-        "Serviço indisponível, por favor tente novamente dentro de alguns minutos",
+        "Não foi possível registrar o apoio. Por favor, tente novamente.",
       );
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
+  if (isSupported) {
+    return (
+      <div
+        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-300 border border-rose-300/40 dark:border-rose-800/40 select-none ${className}`}
+      >
+        <FaHeart className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
+        <span>Apoiado</span>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {isDisabled ? (
-        <span className="flex gap-1 items-center">
-          Apoiado <PiHeartFill className="text-red-600" />
-        </span>
-      ) : (
-        <button
-          title="Apoiar"
-          className={`
-            group
-            special-rose-button 
-            flex items-center gap-2
-            ${className}
-          `}
-          onClick={handleRegisterSupport}
-        >
-          <span className="text-red-500 group-hover:text-white duration-300">
-            <PiHandHeartThin size={25} />
-          </span>
-          Apoiar
-        </button>
-      )}
-    </>
+    <button
+      type="button"
+      title="Apoiar este desabafo"
+      disabled={isLoading}
+      onClick={handleRegisterSupport}
+      className={`
+        group relative inline-flex items-center gap-2
+        px-4 py-2 rounded-full text-xs font-semibold
+        bg-card hover:bg-rose-50 dark:hover:bg-rose-950/30
+        text-foreground hover:text-rose-600 dark:hover:text-rose-300
+        border border-border/80 hover:border-rose-400/50
+        shadow-soft hover:shadow-soft-md
+        transition-all duration-200 active:scale-95
+        disabled:opacity-60 disabled:cursor-not-allowed
+        ${className}
+      `}
+    >
+      <FaRegHeart className="w-3.5 h-3.5 text-rose-500 group-hover:scale-110 transition-transform duration-200" />
+      <span>Apoiar</span>
+    </button>
   );
 }

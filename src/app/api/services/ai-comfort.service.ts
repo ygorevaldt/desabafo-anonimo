@@ -5,7 +5,8 @@ export class AiComfortService {
   private modelName: string;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey =
+      process.env.NODE_ENV === "test" ? undefined : process.env.GEMINI_API_KEY;
     if (apiKey) {
       this.ai = new GoogleGenAI({ apiKey });
     }
