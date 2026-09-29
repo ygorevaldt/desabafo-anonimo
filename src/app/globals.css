@@ -2,52 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #faf8f5;
+    --foreground: #27272a;
+    --card: #ffffff;
+    --card-foreground: #27272a;
+    --popover: #ffffff;
+    --popover-foreground: #27272a;
+    --primary: #f43f5e;
+    --primary-foreground: #ffffff;
+    --secondary: #f4f2ee;
+    --secondary-foreground: #3f3f46;
+    --muted: #f4f2ee;
+    --muted-foreground: #71717a;
+    --accent: #fff1f2;
+    --accent-foreground: #e11d48;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #e8e5df;
+    --input: #e8e5df;
+    --ring: #fb7185;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: #121215;
+    --foreground: #f4f4f5;
+    --card: #19191e;
+    --card-foreground: #f4f4f5;
+    --popover: #19191e;
+    --popover-foreground: #f4f4f5;
+    --primary: #fb7185;
+    --primary-foreground: #121215;
+    --secondary: #23232a;
+    --secondary-foreground: #e4e4e7;
+    --muted: #23232a;
+    --muted-foreground: #a1a1aa;
+    --accent: #2d161d;
+    --accent-foreground: #fda4af;
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fef2f2;
+    --border: #2c2c34;
+    --input: #2c2c34;
+    --ring: #f43f5e;
   }
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 @layer components {
   .link {
-    @apply hover:text-rose-400 duration-300;
-  }
-
-  .spinner-border {
-    @apply border-t-rose-500 border-r-transparent border-b-transparent border-l-rose-500;
+    @apply hover:text-rose-500 transition-colors duration-200;
   }
 
   .nav-link {
-    @apply text-xl hover:text-rose-400 duration-300;
+    @apply text-base md:text-lg font-medium text-muted-foreground hover:text-foreground transition-colors duration-200;
   }
 
   .nav-link.active {
-    @apply font-bold border-b-2 border-b-black;
-  }
-
-  .special-rose-button {
-    @apply px-2 py-1 border-2 rounded-lg text-black;
-    @apply hover:text-white;
-    @apply hover:animate-pulse hover:scale-105;
-    @apply hover:bg-gradient-to-r from-rose-500 to-rose-300 hover:border-white;
-    @apply active:scale-95;
-    @apply duration-200;
-  }
-
-  .rose-button {
-    @apply bg-rose-500 duration-300 px-6 py-2 rounded-xl text-white;
-    @apply hover:bg-rose-400 hover:scale-105;
+    @apply font-semibold text-rose-500 border-b-2 border-rose-500 pb-1;
   }
 }
