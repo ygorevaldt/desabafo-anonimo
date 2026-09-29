@@ -17,7 +17,7 @@ export default function Home() {
 
         {/* Headline */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
             Muitas vezes, só precisamos{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-rose-400">
               ser ouvidos

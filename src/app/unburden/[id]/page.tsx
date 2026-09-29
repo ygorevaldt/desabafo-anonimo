@@ -6,7 +6,6 @@ import { UnburdenType } from "@/types/unburden.type";
 import { errorAlert } from "@/utils/alert";
 import { Unburden } from "@/components/Unburden";
 import { DinamicPage } from "@/components/DinamicPage";
-import { SupportButton } from "@/components/SupportButton";
 import { CommentList } from "@/components/CommentList";
 import { CommentForm } from "@/components/CommentForm";
 import { CommentType } from "@/types";
@@ -96,12 +95,11 @@ export default function Page({ params }: Props) {
       ) : unburden ? (
         <div className="flex flex-col gap-8">
           {/* Main Unburden View */}
-          <div className="relative">
-            <Unburden data={unburden} showSensitiveButton={true} />
-            <div className="absolute right-6 bottom-4 z-10">
-              <SupportButton unburden={unburden} />
-            </div>
-          </div>
+          <Unburden
+            data={unburden}
+            showSensitiveButton={true}
+            showSupportButton={true}
+          />
 
           {/* Comment Form and List */}
           <section className="flex flex-col gap-8">

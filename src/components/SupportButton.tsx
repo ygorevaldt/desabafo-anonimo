@@ -24,7 +24,12 @@ export function SupportButton({
   const [isSupported, setIsSupported] = useState(unburden.supported);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleRegisterSupport() {
+  async function handleRegisterSupport(e?: React.MouseEvent) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (isSupported) {
       infoAlert("Você já apoiou este desabafo.");
       return;
@@ -54,7 +59,7 @@ export function SupportButton({
   if (isSupported) {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-300 border border-rose-300/40 dark:border-rose-800/40 select-none ${className}`}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-300/40 dark:border-rose-800/40 select-none ${className}`}
       >
         <FaHeart className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
         <span>Apoiado</span>
@@ -69,18 +74,18 @@ export function SupportButton({
       disabled={isLoading}
       onClick={handleRegisterSupport}
       className={`
-        group relative inline-flex items-center gap-2
-        px-4 py-2 rounded-full text-xs font-semibold
-        bg-card hover:bg-rose-50 dark:hover:bg-rose-950/30
-        text-foreground hover:text-rose-600 dark:hover:text-rose-300
+        group/btn relative inline-flex items-center gap-1.5
+        px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold
+        bg-card hover:bg-rose-50 dark:hover:bg-rose-950/40
+        text-foreground hover:text-rose-600 dark:hover:text-rose-400
         border border-border/80 hover:border-rose-400/50
         shadow-soft hover:shadow-soft-md
         transition-all duration-200 active:scale-95
-        disabled:opacity-60 disabled:cursor-not-allowed
+        disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer
         ${className}
       `}
     >
-      <FaRegHeart className="w-3.5 h-3.5 text-rose-500 group-hover:scale-110 transition-transform duration-200" />
+      <FaRegHeart className="w-3.5 h-3.5 text-rose-500 group-hover/btn:scale-110 transition-transform duration-200" />
       <span>Apoiar</span>
     </button>
   );
