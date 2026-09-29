@@ -1,103 +1,130 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { UnburdenType } from "@/types/unburden.type";
 import { errorAlert } from "@/utils/alert";
-import { Loading } from "@/components/Loading";
 import { Unburden } from "@/components/Unburden";
 import { DinamicPage } from "@/components/DinamicPage";
 import { SupportButton } from "@/components/SupportButton";
 import { CommentList } from "@/components/CommentList";
 import { CommentForm } from "@/components/CommentForm";
 import { CommentType } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FaArrowLeft } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  fetchUnburdenComments,
-  fetchUniqueUnburden,
-  registerSupportToUnburden,
-} from "@/http";
+  setActiveUnburden,
+  setComments,
+  addComment,
+} from "@/store/slices/activeUnburdenSlice";
+import { fetchUnburdenComments, fetchUniqueUnburden } from "@/http";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 export default function Page({ params }: Props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [unburden, setUnburden] = useState<UnburdenType | null>(null);
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const dispatch = useAppDispatch();
+  const { current: unburden, comments } = useAppSelector(
+    (state) => state.activeUnburden,
+  );
+  const [isLoading, setIsLoading] = useState(!unburden);
 
   useEffect(() => {
-    async function execute() {
+    let isMounted = true;
+
+    async function loadData() {
       try {
         setIsLoading(true);
-        const unburdenId = (await params).id;
+        const resolvedParams = await params;
+        const unburdenId = resolvedParams.id;
 
-        const unburden = await fetchUniqueUnburden(unburdenId);
-        setUnburden(unburden);
+        const [fetchedUnburden, fetchedComments] = await Promise.all([
+          fetchUniqueUnburden(unburdenId),
+          fetchUnburdenComments(unburdenId),
+        ]);
 
-        const comments = await fetchUnburdenComments(unburdenId);
-        setComments(comments);
+        if (isMounted) {
+          dispatch(setActiveUnburden(fetchedUnburden));
+          dispatch(setComments(fetchedComments));
+        }
       } catch (error) {
-        errorAlert("Serviço indisponível, tente novamente em alguns minutos");
         console.error(error);
+        errorAlert(
+          "Não foi possível carregar o desabafo. Tente novamente mais tarde.",
+        );
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    execute();
-  }, [params, setIsLoading, setUnburden, setComments]);
+    loadData();
 
-  async function handleRegisterSupport() {
-    if (!unburden) return;
+    return () => {
+      isMounted = false;
+    };
+  }, [params, dispatch]);
 
-    setUnburden({
-      ...unburden,
-      supports_amount: unburden.supports_amount + 1,
-      supported: true,
-    });
-  }
-
-  function handleNewCommentRegistred(comment: CommentType) {
-    setUnburden({
-      ...unburden!,
-      comments_amount: unburden!.comments_amount + 1,
-    });
-    setComments((currentState) => {
-      return [comment, ...currentState];
-    });
+  function handleNewComment(newComment: CommentType) {
+    dispatch(addComment(newComment));
   }
 
   return (
-    <DinamicPage className="max-w-6xl md:px-4">
-      {unburden !== null && (
-        <div className="flex flex-col gap-10">
-          <div className=" md:bg-zinc-50 md:p-4 rounded-lg md:shadow-md">
+    <DinamicPage className="max-w-4xl py-6 sm:py-10">
+      {/* Back Link */}
+      <div className="mb-6">
+        <Link
+          href="/unburdens"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-rose-500 transition-colors"
+        >
+          <FaArrowLeft className="w-3 h-3" />
+          <span>Voltar para todos os desabafos</span>
+        </Link>
+      </div>
+
+      {isLoading && !unburden ? (
+        <div className="flex flex-col gap-6">
+          <div className="rounded-3xl border border-border/80 bg-card p-7 flex flex-col gap-4 shadow-soft">
+            <Skeleton className="h-7 w-1/2 rounded-2xl" />
+            <Skeleton className="h-28 w-full rounded-2xl" />
+          </div>
+          <Skeleton className="h-44 w-full rounded-3xl" />
+        </div>
+      ) : unburden ? (
+        <div className="flex flex-col gap-8">
+          {/* Main Unburden View */}
+          <div className="relative">
             <Unburden data={unburden} showSensitiveButton={true} />
-            <div className="flex justify-end mt-2">
-              <SupportButton
-                sumSupport={handleRegisterSupport}
-                unburden={unburden}
-                className="bg-white"
-              />
+            <div className="absolute right-6 bottom-4 z-10">
+              <SupportButton unburden={unburden} />
             </div>
           </div>
-          <article
-            className="
-            w-[95%] mx-auto flex flex-col gap-12 md:gap-8
-            "
-          >
+
+          {/* Comment Form and List */}
+          <section className="flex flex-col gap-8">
             <CommentForm
               unburdenId={unburden.id}
-              handleNewCommentRegistred={handleNewCommentRegistred}
+              onCommentRegistered={handleNewComment}
             />
-            <section className="flex flex-col gap-2">
-              <h2 className="font-bold text-xl">Mensagens de apoio</h2>
+
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                <h3 className="text-lg font-bold text-foreground">
+                  Apoios da Comunidade ({comments.length})
+                </h3>
+              </div>
               <CommentList comments={comments} />
-            </section>
-          </article>
+            </div>
+          </section>
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground text-sm">Desabafo não encontrado.</p>
         </div>
       )}
-      {isLoading && <Loading />}
     </DinamicPage>
   );
 }

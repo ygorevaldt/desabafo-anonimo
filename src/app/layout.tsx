@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { StoreProvider } from "@/store/StoreProvider";
 
 const geistSans = localFont({
   src: "../assets/fonts/GeistVF.woff",
@@ -14,9 +16,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Desabafo Anônimo",
+  title: "Desabafo Anônimo | Espaço Seguro e Empático",
   description:
-    "Um espaço seguro e anônimo para as pessoas expressarem seus sentimentos",
+    "Um espaço seguro, anônimo e acolhedor para expressar seus sentimentos, ser ouvido e encontrar apoio humano.",
 };
 
 export default function RootLayout({
@@ -25,14 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/globe.svg" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen selection:bg-rose-500/20 selection:text-rose-600`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <StoreProvider>{children}</StoreProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

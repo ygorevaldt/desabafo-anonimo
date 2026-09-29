@@ -27,7 +27,7 @@ Você pode acessar o site aqui: [www.desabafoanonimo.com.br]("https://www.desaba
 
 ## Tecnologias utilizadas
 
-[![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/) [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/) [![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/) [![React Router](https://img.shields.io/badge/react--router-%23CA4245?style=for-the-badge&logo=react-router&logoColor=white)](https://reactrouter.com/) [![React Icons](https://img.shields.io/badge/react--icons-%232196F3.svg?style=for-the-badge&logo=react-icons&logoColor=white)](https://react-icons.github.io/react-icons/) [![Zod](https://img.shields.io/badge/zod-%23E4473A.svg?style=for-the-badge&logo=zod&logoColor=white)](https://zod.dev/) [![Vitest](https://img.shields.io/badge/Vitest-%23FFA500.svg?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/) [![Prisma](https://img.shields.io/badge/Prisma-%230C344D.svg?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/) [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) [![Date-fns](https://img.shields.io/badge/date--fns-%23D7B12C.svg?style=for-the-badge&logo=date-fns&logoColor=white)](https://date-fns.org/) [![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/) [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/) [![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/) [![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)](https://redux.js.org/) [![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) [![Prisma](https://img.shields.io/badge/Prisma-%230C344D.svg?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/) [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) [![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white)](https://ai.google.dev/) [![Vitest](https://img.shields.io/badge/Vitest-%23FFA500.svg?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 
 <a id="funcionalidades"></a>
 
@@ -37,18 +37,12 @@ Você pode acessar o site aqui: [www.desabafoanonimo.com.br]("https://www.desaba
 
 ### Disponíveis
 
-- **Registrar Desabafo:** Registre um novo desabafo;
-- **Listar Desabafos:** Visualize a lista de todos os desabafos registrados no site;
-- **Registrar Apoio:** Apoie o desabado de outro usuário.
-
-<a id="funcionalidades-em-desenvolvimento"></a>
-
-### Em Desenvolvimento
-
-- **Registrar comentário:** Registre um comentário em um desabafo existente
-- **Registrar subcomentário:** Registre um subcomentário em um comentário existente
-- **Escolher receber conforto de IA:** Decida receber uma mensagem de conforto para o seu desabafo gerada por IA
-- **Registrar "Me senti apoiado":** Demonstre que se sentiu apoiado por um comentário ou subcomentário
+- **Registrar Desabafo:** Registre um novo desabafo anônimo com opção de acolhimento inicial por IA;
+- **Listar Desabafos:** Visualize o feed com design moderno estilo Google/Material 3, carregamento progressivo e proteção a conteúdos sensíveis;
+- **Registrar Apoio:** Demonstre carinho e apoio ao desabafo de outro usuário com atualização instantânea (otimista) no Redux;
+- **Mensagens de Apoio (Comentários):** Deixe palavras gentis e acolhedoras para quem desabafou;
+- **Modo Claro / Modo Escuro (Dark Mode):** Alterne visualmente entre o tema claro e escuro acolhedor, com persistência automática de preferência;
+- **Canal de Apoio Emocional Emergencial (CVV 188):** Acesso rápido e em destaque em toda a plataforma.
 
 <a id="api"></a>
 
