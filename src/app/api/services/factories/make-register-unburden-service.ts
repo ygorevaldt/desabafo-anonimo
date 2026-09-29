@@ -7,7 +7,7 @@ export function makeRegisterUnburdenService() {
   const commentRepository = new PrismaCommentRepository();
   const usecase = new RegisterUnburdenService(
     unburdenRepository,
-    commentRepository
+    commentRepository,
   );
 
   return usecase;

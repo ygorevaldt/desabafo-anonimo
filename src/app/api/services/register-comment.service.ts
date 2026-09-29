@@ -18,7 +18,7 @@ export class RegisterCommentService implements IService<Input, Output> {
 
   constructor(
     private commentRepository: ICommentRepository,
-    moderationService?: AiModerationService
+    moderationService?: AiModerationService,
   ) {
     this.moderationService = moderationService ?? new AiModerationService();
   }
