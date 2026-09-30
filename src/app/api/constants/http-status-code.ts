@@ -1,8 +1,3 @@
-/**
-    Hypertext Transfer Protocol (HTTP) response status codes.
-    @see {@link https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status}
-*/
-
 export enum HttpStatusCode {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,

@@ -3,15 +3,21 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaShieldAlt, FaPhoneAlt, FaFeather, FaSpinner } from "react-icons/fa";
-import { errorAlert, successAlert } from "@/utils/alert";
+import { successAlert } from "@/utils/alert";
+import { handleApiFormError } from "@/utils/handle-api-form-error.util";
 import { registerUnburden } from "@/http";
-import axios from "axios";
 import { useAppDispatch } from "@/store/hooks";
 import { addNewUnburden } from "@/store/slices/feedSlice";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
+import {
+  TITLE_MIN_LENGTH,
+  TITLE_MAX_LENGTH,
+  CONTENT_MIN_LENGTH,
+  CONTENT_MAX_LENGTH,
+} from "@/constants/validation.constants";
 
 export function UnburdenForm() {
   const router = useRouter();
@@ -19,7 +25,7 @@ export function UnburdenForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  const [wantsAiComfort, setWantsAiComfort] = useState(true);
+  const [wantsAiComfort, setWantsAiComfort] = useState(false);
   const [unburden, setUnburden] = useState({
     title: "",
     content: "",
@@ -27,7 +33,7 @@ export function UnburdenForm() {
 
   async function handleSubmitUnburden(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!unburden.title.trim() || !unburden.content.trim()) return;
+    if (isLoading || !unburden.title.trim() || !unburden.content.trim()) return;
 
     setIsLoading(true);
 
@@ -46,16 +52,13 @@ export function UnburdenForm() {
       successAlert("Seu desabafo foi publicado com acolhimento.");
       router.push("/unburdens");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        errorAlert(
+      handleApiFormError(error, {
+        unauthorizedMessage:
           "Não foi possível publicar. O conteúdo viola as diretrizes de segurança da comunidade (apologia ao crime, ódio, abuso ou violência).",
-        );
-        return;
-      }
-      errorAlert(
-        "Serviço temporariamente indisponível. Por favor, tente novamente.",
-      );
-      console.error(error);
+        badRequestFallback: "Preencha os campos corretamente.",
+        defaultMessage:
+          "Serviço temporariamente indisponível. Por favor, tente novamente.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +74,6 @@ export function UnburdenForm() {
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-6">
-      {/* Banner de Emergência CVV */}
       <div className="w-full bg-rose-500/10 border border-rose-300/40 dark:border-rose-900/50 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-xs text-foreground">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0">
@@ -96,7 +98,6 @@ export function UnburdenForm() {
         </a>
       </div>
 
-      {/* Main Form Card */}
       <form
         onSubmit={handleSubmitUnburden}
         className="bg-card border border-border/80 rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col gap-6"
@@ -111,16 +112,17 @@ export function UnburdenForm() {
           </p>
         </header>
 
-        {/* Title Input */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center text-xs font-medium text-foreground">
             <label htmlFor="unburden-title">Título do desabafo</label>
             <span
               className={`text-[11px] ${
-                unburden.title.length > 45 ? "text-amber-500 font-semibold" : "text-muted-foreground"
+                unburden.title.length > TITLE_MAX_LENGTH - 5
+                  ? "text-amber-500 font-semibold"
+                  : "text-muted-foreground"
               }`}
             >
-              {unburden.title.length}/50
+              {unburden.title.length}/{TITLE_MAX_LENGTH}
             </span>
           </div>
           <Input
@@ -130,22 +132,23 @@ export function UnburdenForm() {
             value={unburden.title}
             onChange={handleTitleChange}
             required
-            maxLength={50}
-            minLength={5}
+            maxLength={TITLE_MAX_LENGTH}
+            minLength={TITLE_MIN_LENGTH}
             className="rounded-2xl"
           />
         </div>
 
-        {/* Content Textarea */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center text-xs font-medium text-foreground">
             <label htmlFor="unburden-content">Escreva sua história ou sentimento</label>
             <span
               className={`text-[11px] ${
-                unburden.content.length > 2400 ? "text-amber-500 font-semibold" : "text-muted-foreground"
+                unburden.content.length > CONTENT_MAX_LENGTH - 100
+                  ? "text-amber-500 font-semibold"
+                  : "text-muted-foreground"
               }`}
             >
-              {unburden.content.length}/2500
+              {unburden.content.length}/{CONTENT_MAX_LENGTH}
             </span>
           </div>
           <Textarea
@@ -155,13 +158,12 @@ export function UnburdenForm() {
             value={unburden.content}
             onChange={handleContentChange}
             required
-            maxLength={2500}
-            minLength={25}
+            maxLength={CONTENT_MAX_LENGTH}
+            minLength={CONTENT_MIN_LENGTH}
             className="rounded-2xl resize-y"
           />
         </div>
 
-        {/* AI Comfort Toggle */}
         <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/60 border border-border/80">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -183,7 +185,6 @@ export function UnburdenForm() {
           />
         </div>
 
-        {/* Moderation Notice */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
           <FaShieldAlt className="text-emerald-500 w-3.5 h-3.5 shrink-0" />
           <span>
@@ -191,13 +192,16 @@ export function UnburdenForm() {
           </span>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end pt-2">
           <Button
             type="submit"
             variant="warm"
             size="lg"
-            disabled={isLoading || unburden.title.length < 5 || unburden.content.length < 25}
+            disabled={
+              isLoading ||
+              unburden.title.length < TITLE_MIN_LENGTH ||
+              unburden.content.length < CONTENT_MIN_LENGTH
+            }
             className="w-full sm:w-auto font-semibold gap-2 shadow-soft hover:shadow-soft-md"
           >
             {isLoading ? (

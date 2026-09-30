@@ -35,7 +35,8 @@ Diretrizes:
 - Deixe claro de forma carinhosa que você é uma inteligência artificial acolhedora inicial para que a pessoa não fique no vácuo enquanto outros membros da comunidade leem o desabafo dela.
 - Não aja como psiquiatra nem faça diagnósticos clínicos.
 - Se o desabafo demonstrar ideação suicida ou sofrimento extremo, lembre carinhosamente que o CVV (Centro de Valorização da Vida) está disponível 24h gratuitamente pelo telefone 188 ou pelo chat no site cvv.org.br.
-- Mantenha o texto em tamanho equilibrado (cerca de 2 a 3 parágrafos curtos).`;
+- Mantenha o texto em tamanho equilibrado, conciso e acolhedor (1 a 2 parágrafos curtos, entre 350 e 600 caracteres).
+- REQUISITO OBRIGATÓRIO: A mensagem DEVE ser gerada 100% completa, com início, meio e fim harmoniosos, terminando impreterivelmente com pontuação final (. ou !). Jamais deixe uma frase inacabada ou truncada.`;
 
       const response = await this.ai.models.generateContent({
         model: this.modelName,
@@ -47,10 +48,31 @@ Diretrizes:
         ],
         config: {
           temperature: 0.7,
+          maxOutputTokens: 1500,
         },
       });
 
-      return response.text?.trim() || this.fallbackComfortMessage();
+      let text = response.text?.trim();
+      if (!text || text.length < 50) {
+        return this.fallbackComfortMessage();
+      }
+
+      const validEndings = [".", "!", "?", "”", '"'];
+      const lastChar = text.slice(-1);
+      if (!validEndings.includes(lastChar)) {
+        const lastPunctuation = Math.max(
+          text.lastIndexOf("."),
+          text.lastIndexOf("!"),
+          text.lastIndexOf("?"),
+        );
+        if (lastPunctuation > 150) {
+          text = text.substring(0, lastPunctuation + 1);
+        } else {
+          text = `${text}.`;
+        }
+      }
+
+      return text;
     } catch (error) {
       console.warn("Erro ao gerar mensagem de conforto com IA:", error);
       return this.fallbackComfortMessage();

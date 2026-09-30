@@ -18,7 +18,6 @@ export function NavBar() {
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/90 border-b border-border/80 transition-colors duration-200 shadow-xs">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 min-h-[4.25rem] sm:min-h-[4.75rem] flex items-center justify-between gap-3">
-        {/* Logo / Brand */}
         <Link
           href="/"
           className="group flex items-center gap-2.5 transition-transform active:scale-95 shrink-0"
@@ -31,7 +30,6 @@ export function NavBar() {
           </span>
         </Link>
 
-        {/* Navigation Links (Desktop) */}
         <nav className="hidden md:flex items-center gap-1.5">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -54,9 +52,7 @@ export function NavBar() {
           })}
         </nav>
 
-        {/* Right Actions: CVV, Desabafar CTA, ThemeToggle */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* CVV badge for tablet & desktop */}
           <a
             href="https://cvv.org.br"
             target="_blank"
@@ -70,7 +66,6 @@ export function NavBar() {
             </span>
           </a>
 
-          {/* CVV quick icon for mobile */}
           <a
             href="https://cvv.org.br"
             target="_blank"
@@ -97,7 +92,6 @@ export function NavBar() {
         </div>
       </div>
 
-      {/* Mobile Secondary Bar */}
       <div className="md:hidden flex items-center justify-around border-t border-border/60 py-2.5 px-3 bg-background/95 backdrop-blur-md">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;

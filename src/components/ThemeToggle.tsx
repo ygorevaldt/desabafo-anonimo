@@ -40,7 +40,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       aria-label="Alternar tema"
     >
       {isDark ? (
-        <FaSun className="w-4 h-4 text-amber-400 transition-transform duration-200 rotate-0 hover:rotate-45" />
+        <FaSun className="w-3.5 h-3.5 text-zinc-300 transition-transform duration-200 rotate-0 hover:rotate-45" />
       ) : (
         <FaMoon className="w-3.5 h-3.5 text-zinc-600 transition-transform duration-200 -rotate-12 hover:rotate-0" />
       )}

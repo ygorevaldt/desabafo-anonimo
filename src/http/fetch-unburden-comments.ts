@@ -1,13 +1,15 @@
-import axios from "axios";
+import { httpClient } from "./client";
+import { CommentType } from "@/types";
 
-export async function fetchUnburdenComments(unburdenId: string) {
-  const response = await axios.get(`/api/v1/comment`, {
-    params: {
-      unburden_id: unburdenId,
+export async function fetchUnburdenComments(
+  unburdenId: string,
+): Promise<CommentType[]> {
+  const response = await httpClient.get<{ comments: CommentType[] }>(
+    `/api/v1/comment`,
+    {
+      params: { unburden_id: unburdenId },
     },
-    withCredentials: true,
-  });
+  );
 
-  const { comments } = response.data;
-  return comments;
+  return response.data.comments;
 }

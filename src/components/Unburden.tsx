@@ -8,6 +8,7 @@ import { useState } from "react";
 import { confirmReportAlert, successAlert } from "@/utils/alert";
 import { Badge } from "./ui/badge";
 import { SupportButton } from "./SupportButton";
+import { formatCommentsCount, formatSupportsCount } from "@/utils/comment.util";
 
 type UnburdenProps = {
   data: UnburdenType;
@@ -63,7 +64,6 @@ export function Unburden({
         ${className}
       `}
     >
-      {/* Header: Title and Time */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-2">
         <h2 className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:text-rose-500 transition-colors flex items-center gap-1.5">
           <span className="text-rose-400/80 text-sm">#</span>
@@ -85,10 +85,8 @@ export function Unburden({
         />
       </div>
 
-      {/* Content Area */}
       {data.sensitive_content ? (
         <div className="flex flex-col gap-3">
-          {/* Sensitive Alert Pill */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300 text-xs px-3.5 py-2.5 rounded-2xl relative z-10">
             <span className="font-medium flex items-center gap-1.5">
               ⚠️ Contém temas delicados ou desabafo sensível
@@ -150,7 +148,6 @@ export function Unburden({
         </p>
       )}
 
-      {/* Footer Meta: Denunciar (left) and Metrics + Support Button (right) */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-3.5 mt-1 border-t border-border/60 text-xs text-muted-foreground">
         <button
           type="button"
@@ -166,17 +163,13 @@ export function Unburden({
           {data.comments_amount > 0 && (
             <span className="inline-flex items-center gap-1.5 text-muted-foreground font-medium">
               <FaComment className="w-3.5 h-3.5 text-muted-foreground/80" />
-              <span>
-                {data.comments_amount} {data.comments_amount === 1 ? "comentário" : "comentários"}
-              </span>
+              <span>{formatCommentsCount(data.comments_amount)}</span>
             </span>
           )}
 
           <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground">
             <FaHeart className={`w-3.5 h-3.5 ${data.supports_amount > 0 ? "text-rose-500" : "text-muted-foreground/60"}`} />
-            <span>
-              {data.supports_amount} {data.supports_amount === 1 ? "apoio" : "apoios"}
-            </span>
+            <span>{formatSupportsCount(data.supports_amount)}</span>
           </span>
 
           {showSupportButton && (

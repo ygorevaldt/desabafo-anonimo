@@ -50,7 +50,6 @@ export const feedSlice = createSlice({
         page: number;
       }>,
     ) => {
-      // Append unique items
       const existingIds = new Set(state.items.map((item) => item.id));
       const newItems = action.payload.items.filter(
         (item) => !existingIds.has(item.id),
@@ -73,6 +72,28 @@ export const feedSlice = createSlice({
         unburden.supported = true;
       }
     },
+    incrementFeedCommentCount: (
+      state,
+      action: PayloadAction<{ unburdenId: string; amount?: number }>,
+    ) => {
+      const unburden = state.items.find(
+        (item) => item.id === action.payload.unburdenId,
+      );
+      if (unburden) {
+        unburden.comments_amount += action.payload.amount ?? 1;
+      }
+    },
+    updateFeedCommentCount: (
+      state,
+      action: PayloadAction<{ unburdenId: string; count: number }>,
+    ) => {
+      const unburden = state.items.find(
+        (item) => item.id === action.payload.unburdenId,
+      );
+      if (unburden) {
+        unburden.comments_amount = action.payload.count;
+      }
+    },
     setStatus: (state, action: PayloadAction<FeedState["status"]>) => {
       state.status = action.payload;
     },
@@ -88,6 +109,8 @@ export const {
   appendFeed,
   addNewUnburden,
   optimisticSupport,
+  incrementFeedCommentCount,
+  updateFeedCommentCount,
   setStatus,
   setError,
 } = feedSlice.actions;

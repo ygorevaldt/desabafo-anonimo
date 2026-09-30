@@ -1,7 +1,12 @@
-import { Comment, Prisma, Support } from "@prisma/client";
+import { Comment, Prisma } from "@prisma/client";
 
 import { database } from "@/app/api/infra/database";
-import { ICommentRepository } from "./comment-repository.interface";
+import {
+  CommentWithSubcomments,
+  ICommentRepository,
+} from "./comment-repository.interface";
+
+import { pinAiCommentFirst } from "@/constants/ai-comfort.constant";
 
 export class PrismaCommentRepository implements ICommentRepository {
   async create(data: Prisma.CommentUncheckedCreateInput): Promise<Comment> {
@@ -11,8 +16,8 @@ export class PrismaCommentRepository implements ICommentRepository {
 
   async findMany(
     unburdenId: string,
-    subcomments?: boolean,
-  ): Promise<Comment[]> {
+    subcomments: boolean = true,
+  ): Promise<CommentWithSubcomments[]> {
     const comments = await database.comment.findMany({
       where: {
         subcommentId: null,
@@ -20,29 +25,47 @@ export class PrismaCommentRepository implements ICommentRepository {
         sensitiveContent: false,
       },
       include: {
-        subcomments,
+        subcomments: subcomments
+          ? {
+              where: {
+                sensitiveContent: false,
+              },
+              orderBy: {
+                createdAt: "desc",
+              },
+            }
+          : false,
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    return comments;
+    return pinAiCommentFirst(comments) as CommentWithSubcomments[];
   }
 
   async findUnique(
     commentId: string,
     subcomments?: boolean,
-  ): Promise<Comment | null> {
+  ): Promise<CommentWithSubcomments | null> {
     const comment = await database.comment.findUnique({
       where: {
         id: commentId,
       },
       include: {
-        subcomments,
+        subcomments: subcomments
+          ? {
+              where: {
+                sensitiveContent: false,
+              },
+              orderBy: {
+                createdAt: "desc",
+              },
+            }
+          : false,
       },
     });
 
-    return comment;
+    return comment as CommentWithSubcomments | null;
   }
 }

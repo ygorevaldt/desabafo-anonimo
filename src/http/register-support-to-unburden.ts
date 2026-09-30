@@ -1,14 +1,12 @@
+import { httpClient } from "./client";
 import { UnburdenType } from "@/types";
-import axios from "axios";
 
-export async function registerSupportToUnburden(unburden: UnburdenType) {
+export async function registerSupportToUnburden(
+  unburden: UnburdenType,
+): Promise<void> {
   if (unburden.supported) return;
 
-  await axios({
-    method: "POST",
-    url: "/api/v1/support",
-    data: {
-      unburden_id: unburden.id,
-    },
+  await httpClient.post("/api/v1/support", {
+    unburden_id: unburden.id,
   });
 }

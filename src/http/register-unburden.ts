@@ -1,4 +1,5 @@
-import axios from "axios";
+import { httpClient } from "./client";
+import { UnburdenType } from "@/types";
 
 type RegisterUnburdenParams = {
   title: string;
@@ -6,12 +7,12 @@ type RegisterUnburdenParams = {
   wantsAiComfort?: boolean;
 };
 
-export async function registerUnburden(data: RegisterUnburdenParams) {
-  const response = await axios({
-    method: "POST",
-    url: "/api/v1/unburden",
+export async function registerUnburden(
+  data: RegisterUnburdenParams,
+): Promise<UnburdenType> {
+  const response = await httpClient.post<UnburdenType>(
+    "/api/v1/unburden",
     data,
-  });
-
+  );
   return response.data;
 }

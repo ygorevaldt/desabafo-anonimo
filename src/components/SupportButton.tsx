@@ -38,7 +38,6 @@ export function SupportButton({
     try {
       setIsLoading(true);
 
-      // Optimistic update in local state and Redux store
       setIsSupported(true);
       dispatch(optimisticSupport(unburden.id));
       dispatch(optimisticSupportActive());

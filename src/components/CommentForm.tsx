@@ -2,14 +2,19 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FaHeart, FaSpinner, FaPaperPlane } from "react-icons/fa";
-import { errorAlert, successAlert } from "@/utils/alert";
-import axios from "axios";
+import { successAlert } from "@/utils/alert";
+import { handleApiFormError } from "@/utils/handle-api-form-error.util";
 import { CommentType } from "@/types";
 import { registerComment } from "@/http";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { useAppDispatch } from "@/store/hooks";
 import { addComment } from "@/store/slices/activeUnburdenSlice";
+import { incrementFeedCommentCount } from "@/store/slices/feedSlice";
+import {
+  COMMENT_CONTENT_MIN_LENGTH,
+  COMMENT_CONTENT_MAX_LENGTH,
+} from "@/constants/validation.constants";
 
 type CommentFormProps = {
   unburdenId: string;
@@ -26,7 +31,12 @@ export function CommentForm({
 
   async function handleSubmitComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!content.trim() || content.length < 5) return;
+    if (
+      isLoading ||
+      !content.trim() ||
+      content.length < COMMENT_CONTENT_MIN_LENGTH
+    )
+      return;
 
     setIsLoading(true);
 
@@ -37,20 +47,14 @@ export function CommentForm({
       });
 
       dispatch(addComment(newComment));
+      dispatch(incrementFeedCommentCount({ unburdenId }));
       onCommentRegistered?.(newComment);
       successAlert("Sua mensagem de apoio foi enviada.");
       setContent("");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        errorAlert(
-          "Não foi possível publicar. O conteúdo viola as diretrizes de acolhimento e segurança.",
-        );
-        return;
-      }
-      errorAlert(
-        "Serviço temporariamente indisponível. Tente novamente em alguns minutos.",
-      );
-      console.error(error);
+      handleApiFormError(error, {
+        badRequestFallback: `O comentário deve ter no mínimo ${COMMENT_CONTENT_MIN_LENGTH} caracteres.`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -82,13 +86,15 @@ export function CommentForm({
           value={content}
           onChange={handleContentChange}
           required
-          maxLength={2500}
-          minLength={5}
+          maxLength={COMMENT_CONTENT_MAX_LENGTH}
+          minLength={COMMENT_CONTENT_MIN_LENGTH}
           className="rounded-2xl"
         />
         <div className="flex justify-between items-center text-[11px] text-muted-foreground px-1">
-          <span>Mínimo de 5 caracteres</span>
-          <span>{content.length}/2500</span>
+          <span>Mínimo de {COMMENT_CONTENT_MIN_LENGTH} caracteres</span>
+          <span>
+            {content.length}/{COMMENT_CONTENT_MAX_LENGTH}
+          </span>
         </div>
       </div>
 
@@ -97,7 +103,7 @@ export function CommentForm({
           type="submit"
           variant="warm"
           size="sm"
-          disabled={isLoading || content.length < 5}
+          disabled={isLoading || content.length < COMMENT_CONTENT_MIN_LENGTH}
           className="gap-2 font-semibold shadow-soft"
         >
           {isLoading ? (

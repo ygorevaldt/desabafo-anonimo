@@ -34,7 +34,20 @@ export class RegisterSubcommentService implements IService<Input, Output> {
     const registredComment = await this.commentRepository.findUnique(commentId);
     if (registredComment === null) throw new RegisterNotFoundException();
 
+    let unburdenId = registredComment.unburdenId;
+    let current = registredComment;
+    while (!unburdenId && current.subcommentId) {
+      const parent = await this.commentRepository.findUnique(current.subcommentId);
+      if (!parent) break;
+      if (parent.unburdenId) {
+        unburdenId = parent.unburdenId;
+        break;
+      }
+      current = parent;
+    }
+
     const subcomment = await this.commentRepository.create({
+      unburdenId: unburdenId ?? undefined,
       subcommentId: commentId,
       content,
       sensitiveContent: moderation.isSensitive,

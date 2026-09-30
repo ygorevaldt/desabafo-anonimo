@@ -1,9 +1,11 @@
-import axios from "axios";
+import { httpClient } from "./client";
+import { UnburdenType } from "@/types";
 
-export async function fetchUniqueUnburden(unburdenId: string) {
-  const response = await axios.get(`/api/v1/unburden/${unburdenId}`, {
-    withCredentials: true,
-  });
-  const { unburden } = response.data;
-  return unburden;
+export async function fetchUniqueUnburden(
+  unburdenId: string,
+): Promise<UnburdenType> {
+  const response = await httpClient.get<{ unburden: UnburdenType }>(
+    `/api/v1/unburden/${unburdenId}`,
+  );
+  return response.data.unburden;
 }

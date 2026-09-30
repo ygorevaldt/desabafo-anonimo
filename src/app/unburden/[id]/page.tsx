@@ -17,7 +17,9 @@ import {
   setComments,
   addComment,
 } from "@/store/slices/activeUnburdenSlice";
+import { updateFeedCommentCount } from "@/store/slices/feedSlice";
 import { fetchUnburdenComments, fetchUniqueUnburden } from "@/http";
+import { countTotalComments } from "@/utils/comment.util";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -47,6 +49,11 @@ export default function Page({ params }: Props) {
         if (isMounted) {
           dispatch(setActiveUnburden(fetchedUnburden));
           dispatch(setComments(fetchedComments));
+
+          const totalComments = countTotalComments(fetchedComments);
+          dispatch(
+            updateFeedCommentCount({ unburdenId, count: totalComments }),
+          );
         }
       } catch (error) {
         console.error(error);
@@ -67,13 +74,10 @@ export default function Page({ params }: Props) {
     };
   }, [params, dispatch]);
 
-  function handleNewComment(newComment: CommentType) {
-    dispatch(addComment(newComment));
-  }
+  function handleNewComment() {}
 
   return (
     <DinamicPage className="max-w-4xl py-6 sm:py-10">
-      {/* Back Link */}
       <div className="mb-6">
         <Link
           href="/unburdens"
@@ -94,14 +98,12 @@ export default function Page({ params }: Props) {
         </div>
       ) : unburden ? (
         <div className="flex flex-col gap-8">
-          {/* Main Unburden View */}
           <Unburden
             data={unburden}
             showSensitiveButton={true}
             showSupportButton={true}
           />
 
-          {/* Comment Form and List */}
           <section className="flex flex-col gap-8">
             <CommentForm
               unburdenId={unburden.id}
@@ -111,7 +113,7 @@ export default function Page({ params }: Props) {
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pb-2 border-b border-border/60">
                 <h3 className="text-lg font-bold text-foreground">
-                  Apoios da Comunidade ({comments.length})
+                  Apoios da Comunidade ({countTotalComments(comments)})
                 </h3>
               </div>
               <CommentList comments={comments} />

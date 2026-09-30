@@ -54,4 +54,19 @@ describe("unburden", () => {
 
     expect(response.status).toEqual(HttpStatusCode.UNAUTHORIZED);
   });
+
+  it("POST to /api/v1/unburden with wantsAiComfort should return 201 immediately without blocking", async () => {
+    const startTime = Date.now();
+    const response = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
+        ...unburden,
+        wantsAiComfort: true,
+      });
+    const elapsedTime = Date.now() - startTime;
+
+    expect(response.status).toBe(HttpStatusCode.CREATED);
+    expect(response.body).toHaveProperty("id");
+    expect(elapsedTime).toBeLessThan(2000);
+  });
 });

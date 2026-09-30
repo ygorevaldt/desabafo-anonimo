@@ -69,4 +69,42 @@ describe("comment", () => {
 
     expect(response.status).toEqual(HttpStatusCode.UNAUTHORIZED);
   });
+
+  it("POST to /api/v1/comment with comment_id should create a reply and return 201", async () => {
+    const unburdenResponse = await testClient(unburdenRoute)
+      .post("/api/v1/unburden")
+      .send({
+        title: "Desabafo",
+        content: "Este é apenas um desabado sincero",
+      });
+
+    const parentCommentResponse = await testClient(commentRoute)
+      .post("/api/v1/comment")
+      .send({
+        unburden_id: unburdenResponse.body.id,
+        content: "Primeiro comentário de apoio",
+      });
+
+    const replyResponse = await testClient(commentRoute)
+      .post("/api/v1/comment")
+      .send({
+        comment_id: parentCommentResponse.body.id,
+        content: "Muito obrigado pelas palavras de carinho!",
+      });
+
+    expect(replyResponse.status).toEqual(HttpStatusCode.CREATED);
+    expect(replyResponse.body).toHaveProperty("id");
+    expect(replyResponse.body.subcomment_id).toEqual(parentCommentResponse.body.id);
+  });
+
+  it("POST to /api/v1/comment with non-existent comment_id should return 404", async () => {
+    const response = await testClient(commentRoute)
+      .post("/api/v1/comment")
+      .send({
+        comment_id: "00000000-0000-0000-0000-000000000000",
+        content: "Resposta para comentário inexistente",
+      });
+
+    expect(response.status).toEqual(HttpStatusCode.NOT_FOUND);
+  });
 });

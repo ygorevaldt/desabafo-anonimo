@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeRegisterCommentService } from "@/app/api/services/factories/make-register-comment-service";
+import { makeRegisterSubcommentService } from "@/app/api/services/factories/make-register-subcomment-service";
 import { handleRequestError } from "@/app/api/utils/handle-request-error.util";
 import { registerCommentBodySchema } from "../schemas/register-comment-body.schema";
 import { HttpStatusCode } from "../../constants/http-status-code";
@@ -8,14 +9,26 @@ import { fetchCommentsParamsSchema } from "../schemas/fetch-comments-params.sche
 import { makeListCommentService } from "../../services/factories/make-list-comment-service";
 
 export async function POST(request: NextRequest) {
-  const registerCommentService = makeRegisterCommentService();
-
   try {
     const requestBodyJson = await request.json();
     const body = registerCommentBodySchema.parse(requestBodyJson);
 
+    if (body.comment_id) {
+      const registerSubcommentService = makeRegisterSubcommentService();
+      const { subcomment } = await registerSubcommentService.execute({
+        commentId: body.comment_id,
+        content: body.content,
+      });
+
+      const response = new CommentResponseDto(subcomment);
+      return NextResponse.json(response, {
+        status: HttpStatusCode.CREATED,
+      });
+    }
+
+    const registerCommentService = makeRegisterCommentService();
     const { comment } = await registerCommentService.execute({
-      unburdenId: body.unburden_id,
+      unburdenId: body.unburden_id!,
       content: body.content,
     });
 

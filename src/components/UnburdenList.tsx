@@ -21,34 +21,43 @@ export function UnburdenList() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
-    // Only fetch if store is empty or initial
+    let isMounted = true;
     if (unburdens.length === 0) {
       setIsInitialLoading(true);
-      axios
-        .get(`/api/v1/unburden?page=1`, { withCredentials: true })
-        .then((response) => {
-          const { unburdens: fetchedItems, total: fetchedTotal } = response.data;
-          dispatch(
-            setFeed({
-              items: fetchedItems || [],
-              total: fetchedTotal || 0,
-              page: 1,
-            }),
-          );
-        })
-        .catch((error) => {
-          console.error(error);
+    }
+
+    axios
+      .get(`/api/v1/unburden?page=1`, { withCredentials: true })
+      .then((response) => {
+        if (!isMounted) return;
+        const { unburdens: fetchedItems, total: fetchedTotal } = response.data;
+        dispatch(
+          setFeed({
+            items: fetchedItems || [],
+            total: fetchedTotal || 0,
+            page: 1,
+          }),
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+        if (unburdens.length === 0) {
           errorAlert(
             "Não foi possível carregar os desabafos. Tente recarregar a página.",
           );
-        })
-        .finally(() => {
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
           setIsInitialLoading(false);
-        });
-    } else {
-      setIsInitialLoading(false);
-    }
-  }, [dispatch, unburdens.length]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   async function handleFetchMore() {
     try {
@@ -73,7 +82,6 @@ export function UnburdenList() {
     }
   }
 
-  // Loading skeleton state
   if (isInitialLoading && unburdens.length === 0) {
     return (
       <div className="w-full flex flex-col gap-6">
@@ -97,7 +105,6 @@ export function UnburdenList() {
     );
   }
 
-  // Empty state
   if (!isInitialLoading && unburdens.length === 0) {
     return (
       <div className="w-full text-center py-16 px-4 bg-card/60 rounded-3xl border border-border/80 shadow-soft flex flex-col items-center gap-4">

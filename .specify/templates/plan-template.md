@@ -44,7 +44,10 @@
 - [ ] **Integration-Only Scope**: Only integration tests are used with `testClient` and real PostgreSQL database (NO isolated unit tests with excessive mocks).
 - [ ] **Layered Architecture**: Respects the unidirectional flow: Route Handler -> Zod Schema -> Factory -> Service (`IService<Input, Output>`) -> Repository Interface -> Prisma Repository -> DTO / Domain Exception.
 - [ ] **Simplicity & Maintainability**: Adheres to KISS and YAGNI; avoids premature abstractions or unnecessary complexity.
-- [ ] **AI Safety & Fallback**: Any AI feature integrates deterministic fallback (`fallbackModeration`, etc.) and respects user vulnerability safeguards.
+- [ ] **AI Safety & Async Processing**: Immediate AI comfort generation is non-blocking/asynchronous; fallback mechanisms are active and sensitive content safeguards are enforced.
+- [ ] **Idempotency in Critical Operations**: All critical state-mutating operations (vents, comments, subcomments, supports) guarantee idempotency in frontend and backend.
+- [ ] **DRY & Modular Reuse**: Zero duplication of business rules, validation constraints, calculation logic, or types. Shared logic and types must be extracted to centralized `.util`, constants, or `src/types/`.
+- [ ] **Clean Code & Self-Explanatory Implementation**: Strict prohibition of explanatory implementation comments. Code must be self-explanatory through expressive naming, structure, and design (no comments in implementation).
 - [ ] **Parity & Automation**: Database operations and test runs leverage the established Docker and scripts pipeline.
 
 ## Project Structure

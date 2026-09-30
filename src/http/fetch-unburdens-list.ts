@@ -1,18 +1,27 @@
-import axios from "axios";
+import { httpClient } from "./client";
+import { UnburdenType } from "@/types";
 
 type FetchUnburdensListParams = {
   page: number;
   take?: number;
 };
 
+type FetchUnburdensListResponse = {
+  unburdens: UnburdenType[];
+  page: number;
+  take: number;
+  total: number;
+};
+
 export async function fetchUnburdensList({
   page,
-  take,
-}: FetchUnburdensListParams) {
-  const response = await axios.get(`/api/v1/unburden`, {
-    withCredentials: true,
-    params: { page },
-  });
+}: FetchUnburdensListParams): Promise<FetchUnburdensListResponse> {
+  const response = await httpClient.get<FetchUnburdensListResponse>(
+    `/api/v1/unburden`,
+    {
+      params: { page },
+    },
+  );
 
   return response.data;
 }

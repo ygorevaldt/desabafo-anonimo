@@ -8,6 +8,8 @@ import { AiModerationService } from "./ai-moderation.service";
 import { AiComfortService } from "./ai-comfort.service";
 import { UnauthorizedContentException } from "./exceptions/unauthorized-content.exception";
 
+import { AI_COMFORT_PREFIX } from "@/constants/ai-comfort.constant";
+
 type Input = {
   title: string;
   content: string;
@@ -49,26 +51,43 @@ export class RegisterUnburdenService implements IService<Input, Output> {
     });
 
     if (data.wantsAiComfort && this.commentRepository) {
+      this.triggerAsyncAiComfort(unburden.id, data.title, data.content);
+    }
+
+    return { unburden };
+  }
+
+  private triggerAsyncAiComfort(
+    unburdenId: string,
+    title: string,
+    content: string,
+  ): void {
+    if (!this.commentRepository) return;
+
+    const commentRepository = this.commentRepository;
+    const comfortService = this.comfortService;
+
+    (async () => {
       try {
-        const comfortMessage = await this.comfortService.generateComfortMessage(
-          data.title,
-          data.content,
+        const comfortMessage = await comfortService.generateComfortMessage(
+          title,
+          content,
         );
         if (comfortMessage) {
-          await this.commentRepository.create({
-            unburdenId: unburden.id,
-            content: `🤖 [Acolhimento Inicial - IA]\n${comfortMessage}`,
+          await commentRepository.create({
+            unburdenId,
+            content: `${AI_COMFORT_PREFIX}${comfortMessage.trim()}`,
             sensitiveContent: false,
           });
         }
       } catch (comfortError) {
         console.warn(
-          "Não foi possível gerar mensagem de conforto inicial:",
+          "Não foi possível gerar mensagem de conforto inicial em background:",
           comfortError,
         );
       }
-    }
-
-    return { unburden };
+    })().catch((err) => {
+      console.warn("Erro não tratado no worker de acolhimento IA:", err);
+    });
   }
 }

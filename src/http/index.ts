@@ -3,4 +3,5 @@ export * from "./fetch-unique-unburden";
 export * from "./register-support-to-unburden";
 export * from "./fetch-unburdens-list";
 export * from "./register-comment";
+export * from "./register-comment-reply";
 export * from "./register-unburden";

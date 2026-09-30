@@ -32,17 +32,17 @@ export class FetchApiStatusService
     const updatedAt = new Date().toISOString();
 
     const databaseVersion = (
-      await database.$queryRaw<ServerVersion[]>/*sql*/ `SHOW server_version;`
+      await database.$queryRaw<ServerVersion[]>`SHOW server_version;`
     )[0].server_version;
 
     const databaseMaxConnections = (
-      await database.$queryRaw<MaxConnections[]>/*sql*/ `SHOW max_connections`
+      await database.$queryRaw<MaxConnections[]>`SHOW max_connections`
     )[0].max_connections;
 
     const databaseOpenedConnections = (
       await database.$queryRaw<
         OpenedConnections[]
-      >/*sql*/ `SELECT COUNT(*)::int AS opened_connections FROM pg_stat_activity WHERE datname = ${process.env.POSTGRESQL_DATABASE}`
+      >`SELECT COUNT(*)::int AS opened_connections FROM pg_stat_activity WHERE datname = ${process.env.POSTGRESQL_DATABASE}`
     )[0].opened_connections;
 
     return {

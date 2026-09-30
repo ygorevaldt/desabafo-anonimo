@@ -1,18 +1,12 @@
 <!--
 Sync Impact Report:
-- Version change: Initial template (unratified) → v1.0.0
-- List of modified principles:
-  - [PRINCIPLE_1_NAME] → I. Test-Driven Development (TDD) via Testes de Integração Estritos (NÃO-NEGOCIÁVEL)
-  - [PRINCIPLE_2_NAME] → II. Arquitetura em Camadas e Modularidade Desacoplada
-  - [PRINCIPLE_3_NAME] → III. Simplicidade, Clareza e Manutenibilidade (KISS & YAGNI)
-  - [PRINCIPLE_4_NAME] → IV. Resiliência de IA com Fallback Gracioso e Segurança
-  - [PRINCIPLE_5_NAME] → V. Infraestrutura Automatizada e Paridade de Ambientes
+- Version change: v1.2.0 → v1.3.0
+- List of modified principles: N/A
 - Added sections:
-  - Padrões Arquiteturais e Tecnologias
-  - Fluxo de Desenvolvimento e Quality Gates
-- Removed sections: N/A (conversão do template base para constituição formal)
+  - VIII. Clean Code e Código Autoexplicativo (NÃO-NEGOCIÁVEL)
+- Removed sections: N/A
 - Templates requiring updates:
-  - ✅ .specify/templates/plan-template.md
+  - ✅ .specify/templates/plan-template.md (adicionada checagem de Clean Code e ausência de comentários redundantes)
   - ✅ .specify/templates/tasks-template.md
   - ✅ .specify/templates/spec-template.md
 - Follow-up TODOs: Nenhuma pendência.
@@ -45,8 +39,9 @@ O projeto deve manter sua essência limpa, organizada e compreensível, evitando
 - O código DEVE ser legível e autoexplicativo, priorizando funções curtas com propósito único, nomenclatura clara e utilitários focados (`src/app/api/utils/`, `src/utils/`).
 - Novas funcionalidades devem harmonizar-se com a convenção de pastas e estilos existentes, garantindo que qualquer desenvolvedor ou agente consiga navegar e estender o sistema de forma previsível e rápida.
 
-### IV. Resiliência de IA com Fallback Gracioso e Segurança
+### IV. Resiliência de IA, Não-Bloqueio Assíncrono e Segurança
 A inteligência artificial (`@google/genai`) atua na moderação de conteúdo (`AiModerationService`) e no acolhimento empático aos usuários (`AiComfortService`):
+- **Execução Assíncrona e Desacoplada de Acolhimento**: Operações de acolhimento empático gerado por IA NUNCA devem reter ou atrasar a resposta da criação de desabafos (`POST /api/v1/unburden`). O desabafo DEVE ser persistido e retornado com sucesso imediatamente ao usuário; a invocação da LLM e a inserção da mensagem de acolhimento inicial DEVEM ocorrer em segundo plano / assincronamente sem degradar a latência da requisição HTTP do usuário.
 - **Fallback Gracioso Obrigatório**: Falhas de rede, ausência da chave `GEMINI_API_KEY`, latência excessiva ou instabilidade na API do Google Gemini NUNCA devem interromper os fluxos centrais da aplicação. O sistema DEVE acionar imediatamente estratégias determinísticas de contingência (como `fallbackModeration()`).
 - **Segurança e Proteção ao Usuário**: Por tratar de desabafos e sentimentos vulneráveis, conteúdos que violem as políticas de segurança devem ser categorizados (`APPROVED`, `SENSITIVE`, `BLOCKED`) e conteúdos bloqueados devem ser rejeitados com status `401 Unauthorized`. O serviço de acolhimento deve priorizar mensagens humanizadas, acolhedoras e direcionamento preventivo ao Centro de Valorização da Vida (CVV - 188).
 
@@ -55,6 +50,23 @@ O ambiente de desenvolvimento e testes DEVE ser idêntico e totalmente automatiz
 - O banco de dados PostgreSQL roda isolado via Docker Compose (`infra/compose.yaml`).
 - Toda execução de testes ou inicialização local é orquestrada por scripts em `infra/scripts/` (`wait-for-postgres.js`, `run-tests.js`), garantindo que o PostgreSQL esteja disponível e as migrações Prisma (`prisma migrate deploy`) estejam aplicadas antes de qualquer teste.
 - Scripts padronizados no `package.json` (`npm run dev`, `npm test`, `npm run test:run`) são a fonte primária de execução para desenvolvedores humanos e agentes autônomos.
+
+### VI. Idempotência em Operações Críticas (NÃO-NEGOCIÁVEL)
+Todas as operações críticas e mutatórias de dados (criação de desabafos, comentários, respostas a comentários e apoios) DEVEM ser estritamente protegidas contra duplicações acidentais e efeitos colaterais redundantes:
+- **Proteção no Frontend**: Os formulários e gatilhos de ação DEVEM desabilitar botões durante o processamento para impedir cliques repetidos (double-submit). O ciclo de vida dos componentes DEVE garantir envio único e dispatches sem duplicidade (evitando disparar simultaneamente em callbacks de sucesso e handlers de página). O gerenciamento de estado (Redux slices) DEVE ser idempotente ao adicionar entidades (verificando unicidade por `id` antes de inserir novos itens na lista).
+- **Garantia de Idempotência no Backend**: As rotas e serviços mutatórios devem ser resilientes a submissões duplicadas, garantindo que requisições repetidas não criem registros espelhados idênticos de comentários ou desabafos no banco de dados.
+
+### VII. Don't Repeat Yourself (DRY) e Reutilização Modular (NÃO-NEGOCIÁVEL)
+O princípio DRY é um pilar estrutural que assegura bounded-contexts bem delimitados e máxima manutenibilidade:
+- **Representação Única da Verdade**: Todo conhecimento, regra de negócio, constante de validação, formatação, cálculo ou tipagem DEVE possuir uma representação única, não-ambígua e autoritativa em todo o sistema.
+- **Proibição de Código e Lógica Duplicados**: É expressamente proibida a cópia ou re-implementação redundante de blocos de lógica em múltiplos locais. Sempre que um comportamento, utilitário, constante, função auxiliar ou tipo for compartilhado ou repetido, ele DEVE ser extraído para um módulo reutilizável (`.util`, `common`, constantes centralizadas ou arquivos de tipos dedicados sob `src/types/` ou pastas de domínio).
+- **Consistência em Bounded-Contexts**: A centralização evita a necessidade de lembrar de alterar o mesmo código em vários lugares da codebase, eliminando inconsistências sutis entre frontend e backend ou entre diferentes serviços e componentes.
+
+### VIII. Clean Code e Código Autoexplicativo (NÃO-NEGOCIÁVEL)
+Código limpo e expressivo elimina a necessidade de comentários explicativos:
+- **Auto-Explicação por Design**: O código DEVE ser expressivo por si só através de nomes claros, intuitivos e intencionais para funções, variáveis, componentes, tipos e constantes.
+- **Proibição de Comentários na Implementação**: Em código, NÃO É LUGAR DE DOCUMENTAÇÃO. É terminantemente PROIBIDO incluir comentários explicativos, resumos de blocos, anotações de passos óbvios ou documentação de implementação no corpo dos arquivos. Comentários explicativos são sintoma de código mal estruturado e se tornam rapidamente defasados à medida que o código evolui, desinformando e poluindo a leitura.
+- **Exceções Estritas de Ferramental**: Apenas diretivas estritamente indispensáveis para o funcionamento de linters ou compiladores (como diretivas pontuais `// eslint-disable-next-line`) são admitidas quando não houver alternativa sintática limpa. Todo o restante deve falar por si mesmo exclusivamente através do código.
 
 ## Padrões Arquiteturais e Tecnologias
 
@@ -100,7 +112,7 @@ A presente Constituição é a autoridade máxima reguladora dos padrões de eng
 - **Procedimento de Emenda**: Qualquer alteração, inclusão ou exclusão de princípio exige discussão fundamentada, atualização do Sync Impact Report e sincronização imediata dos templates correspondentes do Spec-Kit (`.specify/templates/`).
 - **Política de Versionamento da Constituição**:
   - **MAJOR (ex.: 2.0.0)**: Alterações substanciais em princípios fundamentais (ex.: revisão do paradigma exclusivo de testes de integração ou refatoração profunda da arquitetura em camadas).
-  - **MINOR (ex.: 1.1.0)**: Adição de novos princípios, novas diretrizes técnicas ou inclusão de novos domínios arquiteturais sem invalidar as regras anteriores.
+  - **MINOR (ex.: 1.2.0)**: Adição de novos princípios, novas diretrizes técnicas ou inclusão de novos domínios arquiteturais sem invalidar as regras anteriores.
   - **PATCH (ex.: 1.0.1)**: Correções de texto, clarificações semânticas e refinamentos de diretrizes existentes.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-29 | **Last Amended**: 2026-09-29
+**Version**: 1.3.0 | **Ratified**: 2026-09-29 | **Last Amended**: 2026-09-30
