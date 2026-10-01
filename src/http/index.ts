@@ -5,3 +5,4 @@ export * from "./fetch-unburdens-list";
 export * from "./register-comment";
 export * from "./register-comment-reply";
 export * from "./register-unburden";
+export * from "./register-report";

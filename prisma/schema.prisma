@@ -23,9 +23,11 @@ model Unburden {
   title String @map("titulo") @db.VarChar(50)
   content String @map("conteudo") @db.VarChar(2500)
   sensitiveContent Boolean? @map("conteudo_sensivel") @default(false)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp
   createdAt DateTime @map("created_at") @db.Timestamp @default(now())
   supports Support[]
   comments Comment[]
+  reports Report[]
 
   @@map("desabafo")
 }
@@ -43,4 +45,16 @@ model Comment {
   supports Support[]
 
   @@map("comentario")
+}
+
+model Report {
+  id String @id @map("id") @db.Uuid @default(uuid())
+  sessionId String @map("session_id") @db.VarChar(36)
+  unburdenId String @map("id_desabafo") @db.Uuid
+  unburden Unburden @relation(fields: [unburdenId], references: [id], onDelete: Cascade)
+  reason String? @map("motivo") @db.VarChar(255)
+  createdAt DateTime @map("created_at") @db.Timestamp @default(now())
+
+  @@unique([sessionId, unburdenId])
+  @@map("denuncia")
 }

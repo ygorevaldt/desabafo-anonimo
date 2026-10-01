@@ -6,6 +6,7 @@ import {
   POST as postUnburden,
 } from "@/app/api/v1/unburden/route";
 import { GET as getUnburdenById } from "@/app/api/v1/unburden/[id]/route";
+import { POST as postReport } from "@/app/api/v1/unburden/[id]/report/route";
 import {
   GET as getComment,
   POST as postComment,
@@ -58,6 +59,12 @@ const ROUTE_REGISTRY: VersionRouteRegistry = {
       2: {
         GET: (request, subpath) =>
           getUnburdenById(request, {
+            params: Promise.resolve({ id: subpath[1] }),
+          }),
+      },
+      3: {
+        POST: (request, subpath) =>
+          postReport(request, {
             params: Promise.resolve({ id: subpath[1] }),
           }),
       },
@@ -168,4 +175,3 @@ export class GatewayDispatcher {
     return await handler(request, subpath);
   }
 }
-
