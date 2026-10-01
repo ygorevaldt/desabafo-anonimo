@@ -51,3 +51,24 @@ export async function confirmReportAlert(): Promise<boolean> {
 
   return result.isConfirmed;
 }
+
+export async function rateLimitAlert(retryAfterSeconds?: number) {
+  const waitMessage = retryAfterSeconds
+    ? `Aguarde ${retryAfterSeconds} segundos antes de tentar novamente.`
+    : "Aguarde alguns instantes antes de tentar novamente.";
+
+  await toast.fire({
+    icon: "warning",
+    title: `Muitas requisições. ${waitMessage}`,
+    timer: 5000,
+  });
+}
+
+export async function serviceUnavailableAlert() {
+  await toast.fire({
+    icon: "info",
+    title:
+      "O serviço está se estabilizando no momento. Tente novamente em instantes.",
+    timer: 5000,
+  });
+}

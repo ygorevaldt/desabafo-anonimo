@@ -1,12 +1,12 @@
 <!--
 Sync Impact Report:
-- Version change: v1.2.0 → v1.3.0
+- Version change: v1.3.0 → v1.4.0
 - List of modified principles: N/A
 - Added sections:
-  - VIII. Clean Code e Código Autoexplicativo (NÃO-NEGOCIÁVEL)
+  - IX. Segregação de Commits entre Planejamento e Implementação (NÃO-NEGOCIÁVEL)
 - Removed sections: N/A
 - Templates requiring updates:
-  - ✅ .specify/templates/plan-template.md (adicionada checagem de Clean Code e ausência de comentários redundantes)
+  - ✅ .specify/templates/plan-template.md
   - ✅ .specify/templates/tasks-template.md
   - ✅ .specify/templates/spec-template.md
 - Follow-up TODOs: Nenhuma pendência.
@@ -68,6 +68,13 @@ Código limpo e expressivo elimina a necessidade de comentários explicativos:
 - **Proibição de Comentários na Implementação**: Em código, NÃO É LUGAR DE DOCUMENTAÇÃO. É terminantemente PROIBIDO incluir comentários explicativos, resumos de blocos, anotações de passos óbvios ou documentação de implementação no corpo dos arquivos. Comentários explicativos são sintoma de código mal estruturado e se tornam rapidamente defasados à medida que o código evolui, desinformando e poluindo a leitura.
 - **Exceções Estritas de Ferramental**: Apenas diretivas estritamente indispensáveis para o funcionamento de linters ou compiladores (como diretivas pontuais `// eslint-disable-next-line`) são admitidas quando não houver alternativa sintática limpa. Todo o restante deve falar por si mesmo exclusivamente através do código.
 
+### IX. Segregação de Commits entre Planejamento e Implementação (NÃO-NEGOCIÁVEL)
+Para garantir um histórico de controle de versão limpo, rastreável e auditável:
+- **Separação Rígida de Commits**: Os artefatos de planejamento gerados pelo Spec-Kit (especificação `spec.md`, plano de arquitetura `plan.md`, modelo de dados `data-model.md`, contratos `contracts/`, quickstart `quickstart.md`, tarefas `tasks.md`, checklists e arquivos em `.specify/` ou `specs/`) DEVEM ser commitados de forma estritamente isolada do código-fonte da aplicação.
+- **Commit de Planejamento (Docs/Spec)**: Commit contendo única e exclusivamente os documentos de especificação, planejamento e design técnico gerados para a feature (ex: `docs(spec): add specification, plan and tasks for ...`).
+- **Commit(s) de Implementação**: Commit(s) contendo os testes, código de backend, frontend, utilitários, dependências e código de produção implementados (ex: `feat(...)` / `test(...)` / `refactor(...)`).
+- É terminantemente proibido agrupar a geração de especificações/planejamento com a implementação de código em um único commit misto.
+
 ## Padrões Arquiteturais e Tecnologias
 
 ### Stack Oficial
@@ -115,4 +122,5 @@ A presente Constituição é a autoridade máxima reguladora dos padrões de eng
   - **MINOR (ex.: 1.2.0)**: Adição de novos princípios, novas diretrizes técnicas ou inclusão de novos domínios arquiteturais sem invalidar as regras anteriores.
   - **PATCH (ex.: 1.0.1)**: Correções de texto, clarificações semânticas e refinamentos de diretrizes existentes.
 
-**Version**: 1.3.0 | **Ratified**: 2026-09-29 | **Last Amended**: 2026-09-30
+**Version**: 1.4.0 | **Ratified**: 2026-09-29 | **Last Amended**: 2026-10-01
+

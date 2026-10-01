@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
-import * as statusRoute from "@/app/api/v1/status/route";
+import * as gatewayRoute from "@/app/api/gateway/[...path]/route";
 import { testClient } from "../../utils/test-client";
+import { cleanDatabase } from "../../utils/clean-database.util";
 
 describe("status", () => {
-  it("GET to /api/v1/status should return http status code 200 and the api status info", async () => {
-    const response = await testClient(statusRoute).get("/api/v1/status");
+  it("GET to /api/gateway/v1/status should return http status code 200 and the api status info", async () => {
+    await cleanDatabase();
+    const response = await testClient(gatewayRoute, {
+      path: ["v1", "status"] as any,
+    }).get("/api/gateway/v1/status");
 
     expect(response.status).toEqual(200);
 
