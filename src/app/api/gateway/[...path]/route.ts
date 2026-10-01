@@ -9,7 +9,7 @@ import { circuitBreakerRegistry } from "../circuit-breaker/circuit-breaker-regis
 import { RateLimitResult } from "../rate-limit/rate-limit.types";
 
 type RouteContext = {
-  params?: Promise<{ path?: string | string[] }>;
+  params: Promise<{ path: string[] }>;
 };
 
 const dispatcher = new GatewayDispatcher();
@@ -32,9 +32,6 @@ async function resolvePathParts(
     const resolved = await context.params;
     if (Array.isArray(resolved?.path)) {
       return resolved.path;
-    }
-    if (typeof resolved?.path === "string" && resolved.path.length > 0) {
-      return [resolved.path];
     }
   }
 
@@ -98,23 +95,22 @@ async function handleGatewayRequest(
   }
 }
 
-export async function GET(request: NextRequest, context?: RouteContext) {
+export async function GET(request: NextRequest, context: RouteContext) {
   return handleGatewayRequest(request, context);
 }
 
-export async function POST(request: NextRequest, context?: RouteContext) {
+export async function POST(request: NextRequest, context: RouteContext) {
   return handleGatewayRequest(request, context);
 }
 
-export async function PUT(request: NextRequest, context?: RouteContext) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   return handleGatewayRequest(request, context);
 }
 
-export async function DELETE(request: NextRequest, context?: RouteContext) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   return handleGatewayRequest(request, context);
 }
 
-export async function PATCH(request: NextRequest, context?: RouteContext) {
+export async function PATCH(request: NextRequest, context: RouteContext) {
   return handleGatewayRequest(request, context);
 }
-
