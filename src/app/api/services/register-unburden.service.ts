@@ -80,14 +80,7 @@ export class RegisterUnburdenService implements IService<Input, Output> {
             sensitiveContent: false,
           });
         }
-      } catch (comfortError) {
-        console.warn(
-          "Não foi possível gerar mensagem de conforto inicial em background:",
-          comfortError,
-        );
-      }
-    })().catch((err) => {
-      console.warn("Erro não tratado no worker de acolhimento IA:", err);
-    });
+      } catch {}
+    })().catch(() => {});
   }
 }

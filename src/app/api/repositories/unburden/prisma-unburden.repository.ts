@@ -1,4 +1,4 @@
-import { Prisma, Unburden } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   FindManyParams,
   FindUniqueParams,
@@ -52,6 +52,9 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
     const unburdens = await database.unburden.findMany({
       skip,
       take,
+      where: {
+        deletedAt: null,
+      },
       include: {
         supports: {
           where: {
@@ -90,7 +93,10 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
   }: FindUniqueParams): Promise<UnburdenOutput | null> {
     await this.healOrphanSubcomments();
     const unburden = await database.unburden.findUnique({
-      where: { id },
+      where: {
+        id,
+        deletedAt: null,
+      },
       include: {
         supports: {
           where: {
@@ -121,7 +127,20 @@ export class PrismaUnburdenRepository implements IUnburdenRepository {
   }
 
   async total(): Promise<number> {
-    const total = await database.unburden.count();
+    const total = await database.unburden.count({
+      where: {
+        deletedAt: null,
+      },
+    });
     return total;
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await database.unburden.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }

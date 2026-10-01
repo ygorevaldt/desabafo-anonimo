@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { UnburdenType } from "@/types/unburden.type";
-import { FaEye, FaEyeSlash, FaHashtag, FaFlag, FaPhoneAlt, FaComment, FaHeart } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaFlag, FaPhoneAlt, FaComment, FaHeart } from "react-icons/fa";
 import { Time } from "./Time";
 import { useState } from "react";
-import { confirmReportAlert, successAlert } from "@/utils/alert";
-import { Badge } from "./ui/badge";
+import { confirmReportAlert, successAlert, errorAlert } from "@/utils/alert";
 import { SupportButton } from "./SupportButton";
 import { formatCommentsCount, formatSupportsCount } from "@/utils/comment.util";
+import { registerReport } from "@/http/register-report";
 
 type UnburdenProps = {
   data: UnburdenType;
@@ -45,10 +45,13 @@ export function Unburden({
 
     const confirmed = await confirmReportAlert();
     if (confirmed) {
-      setReported(true);
-      successAlert(
-        "Obrigado. Este desabafo foi enviado para análise da moderação."
-      );
+      try {
+        const result = await registerReport({ unburdenId: data.id });
+        setReported(true);
+        successAlert(result.message);
+      } catch {
+        errorAlert("Não foi possível enviar a denúncia. Tente novamente.");
+      }
     }
   }
 

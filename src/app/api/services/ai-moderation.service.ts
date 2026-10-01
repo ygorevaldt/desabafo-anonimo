@@ -1,35 +1,45 @@
 import { GoogleGenAI } from "@google/genai";
 import { checkContentTemperature } from "../utils/check-content-temperature.util";
+import { generateContentHash } from "../utils/generate-content-hash.util";
+import {
+  moderationCache,
+  ModerationCacheService,
+} from "./cache/moderation-cache.service";
+import {
+  moderationVerdictSchema,
+  ModerationVerdictOutput,
+} from "./schemas/moderation-verdict.schema";
 
-export type ModerationResult = {
-  status: "APPROVED" | "SENSITIVE" | "BLOCKED";
-  category:
-    | "safe"
-    | "self_harm_distress"
-    | "apology_violence"
-    | "sexual_violence"
-    | "hate_speech"
-    | "illegal";
-  isSensitive: boolean;
-  reason?: string;
-};
+export type ModerationResult = ModerationVerdictOutput;
 
 export class AiModerationService {
   private ai: GoogleGenAI | null = null;
   private modelName: string;
+  private cache: ModerationCacheService<ModerationResult>;
 
-  constructor() {
+  constructor(cache?: ModerationCacheService<ModerationResult>) {
     const apiKey =
       process.env.NODE_ENV === "test" ? undefined : process.env.GEMINI_API_KEY;
     if (apiKey) {
       this.ai = new GoogleGenAI({ apiKey });
     }
     this.modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    this.cache = cache ?? moderationCache;
   }
 
   async moderate(text: string, title?: string): Promise<ModerationResult> {
+    const hash = generateContentHash(text, title);
+    const cached = this.cache.get(hash);
+    if (cached) {
+      return cached;
+    }
+
+    let verdict: ModerationResult;
+
     if (!this.ai) {
-      return this.fallbackModeration(text);
+      verdict = this.fallbackModeration(text, title);
+      this.cache.set(hash, verdict);
+      return verdict;
     }
 
     try {
@@ -53,15 +63,7 @@ DIRETRIZES DE MODERAÇÃO:
    * IMPORTANTE: A plataforma existe para acolher essas pessoas; portanto, NÃO bloqueie a pessoa que sofre, apenas marque como sensível para exibirmos avisos e canais de ajuda (como o CVV 188).
 
 3. "APPROVED" (Livre para publicação):
-   - Desabafos comuns, angústias cotidianas, término de relacionamento, tristeza, solidão, problemas no trabalho, estresse.
-
-Responda OBRIGATORIAMENTE em formato JSON com o seguinte formato:
-{
-  "status": "APPROVED" | "SENSITIVE" | "BLOCKED",
-  "category": "safe" | "self_harm_distress" | "apology_violence" | "sexual_violence" | "hate_speech" | "illegal",
-  "isSensitive": boolean,
-  "reason": "breve explicação em português"
-}`;
+   - Desabafos comuns, angústias cotidianas, término de relacionamento, tristeza, solidão, problemas no trabalho, estresse.`;
 
       const response = await this.ai.models.generateContent({
         model: this.modelName,
@@ -77,43 +79,97 @@ Responda OBRIGATORIAMENTE em formato JSON com o seguinte formato:
         ],
         config: {
           responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              status: {
+                type: "STRING",
+                enum: ["APPROVED", "SENSITIVE", "BLOCKED"],
+              },
+              category: {
+                type: "STRING",
+                enum: [
+                  "safe",
+                  "self_harm_distress",
+                  "apology_violence",
+                  "sexual_violence",
+                  "hate_speech",
+                  "illegal",
+                ],
+              },
+              isSensitive: {
+                type: "BOOLEAN",
+              },
+              reason: {
+                type: "STRING",
+              },
+            },
+            required: ["status", "category", "isSensitive"],
+          },
           temperature: 0.1,
         },
       });
 
-      const responseText = response.text?.trim() || "";
-      const parsed = JSON.parse(responseText);
+      const responseText = response.text?.trim() || "{}";
+      const parsedJson = JSON.parse(responseText);
+      const validated = moderationVerdictSchema.parse(parsedJson);
 
-      return {
-        status: parsed.status || "APPROVED",
-        category: parsed.category || "safe",
-        isSensitive:
-          parsed.status === "SENSITIVE" || Boolean(parsed.isSensitive),
-        reason: parsed.reason,
+      verdict = {
+        status: validated.status,
+        category: validated.category,
+        isSensitive: validated.status === "SENSITIVE" || validated.isSensitive,
+        reason: validated.reason,
       };
-    } catch (error) {
-      console.warn(
-        "Erro na moderação por IA, aplicando fallback heurístico:",
-        error,
-      );
-      return this.fallbackModeration(text);
+    } catch {
+      verdict = this.fallbackModeration(text, title);
     }
+
+    this.cache.set(hash, verdict);
+    return verdict;
   }
 
-  private fallbackModeration(text: string): ModerationResult {
-    const temperature = checkContentTemperature(text);
+  private fallbackModeration(text: string, title?: string): ModerationResult {
+    const fullText = title ? `${title} ${text}` : text;
+    const lowerText = fullText.toLowerCase();
+    const temperature = checkContentTemperature(fullText);
 
-    if (temperature === "red") {
+    const severeTerms = [
+      "estupro",
+      "estuprar",
+      "massacre",
+      "pedofilia",
+      "assassinato",
+      "tortura",
+      "nazismo",
+      "espancar",
+    ];
+
+    const hasSevereTerm = severeTerms.some((term) => lowerText.includes(term));
+    const isRed = temperature === "red" || hasSevereTerm;
+
+    if (isRed) {
       return {
         status: "BLOCKED",
         category: "apology_violence",
         isSensitive: true,
         reason:
-          "Conteúdo contém múltiplos termos proibidos pelas regras da comunidade.",
+          "Conteúdo contém termos proibidos pelas regras da comunidade.",
       };
     }
 
-    if (temperature === "yellow") {
+    const isSensitiveTopic =
+      temperature === "yellow" ||
+      lowerText.includes("luto") ||
+      lowerText.includes("depressão") ||
+      lowerText.includes("depressao") ||
+      lowerText.includes("suicídio") ||
+      lowerText.includes("suicidio") ||
+      lowerText.includes("automutilação") ||
+      lowerText.includes("automutilacao") ||
+      lowerText.includes("trauma") ||
+      lowerText.includes("abuso");
+
+    if (isSensitiveTopic) {
       return {
         status: "SENSITIVE",
         category: "self_harm_distress",

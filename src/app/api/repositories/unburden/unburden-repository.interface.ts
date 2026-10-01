@@ -22,4 +22,5 @@ export interface IUnburdenRepository {
   findMany(params: FindManyParams): Promise<UnburdenOutput[]>;
   findUnique(params: FindUniqueParams): Promise<UnburdenOutput | null>;
   total(): Promise<number>;
+  softDelete(id: string): Promise<void>;
 }
