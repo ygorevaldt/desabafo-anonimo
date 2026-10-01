@@ -17,7 +17,7 @@ export async function fetchUnburdensList({
   page,
 }: FetchUnburdensListParams): Promise<FetchUnburdensListResponse> {
   const response = await httpClient.get<FetchUnburdensListResponse>(
-    `/api/v1/unburden`,
+    `/api/gateway/v1/unburden`,
     {
       params: { page },
     },

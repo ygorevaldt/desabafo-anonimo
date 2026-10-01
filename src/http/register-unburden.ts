@@ -11,7 +11,7 @@ export async function registerUnburden(
   data: RegisterUnburdenParams,
 ): Promise<UnburdenType> {
   const response = await httpClient.post<UnburdenType>(
-    "/api/v1/unburden",
+    "/api/gateway/v1/unburden",
     data,
   );
   return response.data;

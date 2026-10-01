@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFeed, appendFeed } from "@/store/slices/feedSlice";
 import { fetchUnburdensList } from "@/http";
@@ -26,15 +25,13 @@ export function UnburdenList() {
       setIsInitialLoading(true);
     }
 
-    axios
-      .get(`/api/v1/unburden?page=1`, { withCredentials: true })
-      .then((response) => {
+    fetchUnburdensList({ page: 1 })
+      .then((data) => {
         if (!isMounted) return;
-        const { unburdens: fetchedItems, total: fetchedTotal } = response.data;
         dispatch(
           setFeed({
-            items: fetchedItems || [],
-            total: fetchedTotal || 0,
+            items: data.unburdens || [],
+            total: data.total || 0,
             page: 1,
           }),
         );

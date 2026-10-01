@@ -1,19 +1,19 @@
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
-import { database } from "@/app/api/infra/database";
 import { beforeEach, describe, expect, it } from "vitest";
-import * as unburdenRoute from "@/app/api/v1/unburden/route";
-import * as supportRoute from "@/app/api/v1/support/route";
+import * as gatewayRoute from "@/app/api/gateway/[...path]/route";
 import { testClient } from "../../utils/test-client";
+import { cleanDatabase } from "../../utils/clean-database.util";
 
 describe("support", () => {
   beforeEach(async () => {
-    await database.support.deleteMany();
-    await database.unburden.deleteMany();
+    await cleanDatabase();
   });
 
-  it("POST to /api/v1/support should return http status code 201", async () => {
-    const unburdenResponse = await testClient(unburdenRoute)
-      .post("/api/v1/unburden")
+  it("POST to /api/gateway/v1/support should return http status code 201", async () => {
+    const unburdenResponse = await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    })
+      .post("/api/gateway/v1/unburden")
       .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
@@ -22,8 +22,10 @@ describe("support", () => {
     const unburden = unburdenResponse.body;
     const sessionId = "valid-test-session-id";
 
-    const createSupportResponse = await testClient(supportRoute)
-      .post("/api/v1/support")
+    const createSupportResponse = await testClient(gatewayRoute, {
+      path: ["v1", "support"] as any,
+    })
+      .post("/api/gateway/v1/support")
       .set("Cookie", `session_id=${sessionId}`)
       .send({
         unburden_id: unburden.id,
@@ -33,9 +35,11 @@ describe("support", () => {
     expect(createSupportResponse.body).toHaveProperty("id");
   });
 
-  it("POST to /api/v1/support should throw error with http status code 401", async () => {
-    const unburdenResponse = await testClient(unburdenRoute)
-      .post("/api/v1/unburden")
+  it("POST to /api/gateway/v1/support should throw error with http status code 401", async () => {
+    const unburdenResponse = await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    })
+      .post("/api/gateway/v1/unburden")
       .send({
         title: "Desabafo",
         content: "Este é apenas um desabado sincero",
@@ -43,8 +47,10 @@ describe("support", () => {
 
     const unburden = unburdenResponse.body;
 
-    const response = await testClient(supportRoute)
-      .post("/api/v1/support")
+    const response = await testClient(gatewayRoute, {
+      path: ["v1", "support"] as any,
+    })
+      .post("/api/gateway/v1/support")
       .send({
         unburden_id: unburden.id,
       });
@@ -52,7 +58,7 @@ describe("support", () => {
     expect(response.status).toEqual(401);
   });
 
-  it("POST to /api/v1/support should throw error with http status code 400", async () => {
+  it("POST to /api/gateway/v1/support should throw error with http status code 400", async () => {
     const sessionId = "generic_session_id";
     const invalidRequestsBody = [
       {},
@@ -61,8 +67,10 @@ describe("support", () => {
     ];
 
     for (const body of invalidRequestsBody) {
-      const response = await testClient(supportRoute)
-        .post("/api/v1/support")
+      const response = await testClient(gatewayRoute, {
+        path: ["v1", "support"] as any,
+      })
+        .post("/api/gateway/v1/support")
         .set("Cookie", `session_id=${sessionId}`)
         .send(body);
 

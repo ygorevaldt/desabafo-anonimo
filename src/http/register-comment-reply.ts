@@ -9,6 +9,6 @@ type RegisterCommentReplyParams = {
 export async function registerCommentReply(
   data: RegisterCommentReplyParams,
 ): Promise<CommentType> {
-  const response = await httpClient.post<CommentType>("/api/v1/comment", data);
+  const response = await httpClient.post<CommentType>("/api/gateway/v1/comment", data);
   return response.data;
 }
