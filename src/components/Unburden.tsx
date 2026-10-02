@@ -17,6 +17,7 @@ type UnburdenProps = {
   showSupportButton?: boolean;
   titleHref?: string;
   previewMode?: boolean;
+  defaultShowSensitive?: boolean;
 };
 
 export function Unburden({
@@ -26,8 +27,11 @@ export function Unburden({
   showSupportButton = false,
   titleHref,
   previewMode = false,
+  defaultShowSensitive = true,
 }: UnburdenProps) {
-  const [showSensitiveContent, setShowSensitiveContent] = useState(false);
+  const [showSensitiveContent, setShowSensitiveContent] = useState(
+    previewMode ? false : defaultShowSensitive,
+  );
   const [reported, setReported] = useState(false);
 
   function handleShowSensitiveContent(e: React.MouseEvent) {
