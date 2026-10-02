@@ -86,7 +86,7 @@ export function Unburden({
         </h2>
         <Time
           publishedAt={new Date(data.created_at)}
-          className="text-xs text-muted-foreground shrink-0 font-medium relative z-10"
+          className="text-xs text-muted-foreground shrink-0 font-medium pointer-events-none"
         />
       </div>
 
@@ -108,7 +108,7 @@ export function Unburden({
           </div>
 
           {previewMode ? (
-            <div className="relative overflow-hidden rounded-2xl bg-secondary/40 border border-border/60 h-20 sm:h-24">
+            <div className="relative overflow-hidden rounded-2xl bg-secondary/40 border border-border/60 h-20 sm:h-24 pointer-events-none select-none">
               <p className="blur-md select-none opacity-30 line-clamp-3 text-sm sm:text-base leading-relaxed text-foreground/90 p-3">
                 {data.content}
               </p>
@@ -181,21 +181,23 @@ export function Unburden({
           <span>{reported ? "Sinalizado" : "Denunciar"}</span>
         </button>
 
-        <div className="relative z-10 flex flex-wrap items-center gap-3 sm:gap-4 ml-auto">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 ml-auto">
           {data.comments_amount > 0 && (
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground font-medium">
+            <span className="inline-flex items-center gap-1.5 text-muted-foreground font-medium pointer-events-none">
               <FaComment className="w-3.5 h-3.5 text-muted-foreground/80" />
               <span>{formatCommentsCount(data.comments_amount)}</span>
             </span>
           )}
 
-          <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground pointer-events-none">
             <FaHeart className={`w-3.5 h-3.5 ${data.supports_amount > 0 ? "text-rose-500" : "text-muted-foreground/60"}`} />
             <span>{formatSupportsCount(data.supports_amount)}</span>
           </span>
 
           {showSupportButton && (
-            <SupportButton unburden={data} />
+            <div className="relative z-10">
+              <SupportButton unburden={data} />
+            </div>
           )}
         </div>
       </div>
