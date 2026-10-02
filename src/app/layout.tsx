@@ -32,6 +32,7 @@ export default function RootLayout({
         <link rel="icon" href="/globe.svg" />
       </head>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen selection:bg-rose-500/20 selection:text-rose-600`}
       >
         <ThemeProvider
