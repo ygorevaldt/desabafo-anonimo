@@ -85,16 +85,23 @@ export function UnburdenList() {
         {[1, 2, 3].map((n) => (
           <div
             key={n}
-            className="rounded-3xl border border-border/80 bg-card p-6 flex flex-col gap-4 shadow-soft"
+            className="rounded-3xl border border-border/80 bg-card p-5 sm:p-7 flex flex-col gap-4 shadow-soft"
           >
-            <div className="flex justify-between items-center">
-              <Skeleton className="h-6 w-1/3 rounded-xl" />
-              <Skeleton className="h-4 w-20 rounded-xl" />
+            <div className="flex justify-between items-center gap-4">
+              <Skeleton className="h-6 w-1/3 min-w-[140px] max-w-[280px] rounded-xl" />
+              <Skeleton className="h-4 w-20 rounded-lg shrink-0" />
             </div>
-            <Skeleton className="h-16 w-full rounded-2xl" />
-            <div className="flex justify-between items-center pt-2">
-              <Skeleton className="h-4 w-24 rounded-lg" />
-              <Skeleton className="h-8 w-28 rounded-full" />
+            <div className="flex flex-col gap-2.5 py-1">
+              <Skeleton className="h-4 w-full rounded-md" />
+              <Skeleton className="h-4 w-11/12 rounded-md" />
+              <Skeleton className="h-4 w-3/4 rounded-md" />
+            </div>
+            <div className="flex justify-between items-center pt-3.5 mt-1 border-t border-border/60">
+              <Skeleton className="h-4 w-20 rounded-md" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-4 w-16 rounded-md" />
+                <Skeleton className="h-8 w-24 rounded-full" />
+              </div>
             </div>
           </div>
         ))}

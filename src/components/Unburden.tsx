@@ -16,6 +16,7 @@ type UnburdenProps = {
   showSensitiveButton?: boolean;
   showSupportButton?: boolean;
   titleHref?: string;
+  previewMode?: boolean;
 };
 
 export function Unburden({
@@ -24,6 +25,7 @@ export function Unburden({
   showSensitiveButton = true,
   showSupportButton = false,
   titleHref,
+  previewMode = false,
 }: UnburdenProps) {
   const [showSensitiveContent, setShowSensitiveContent] = useState(false);
   const [reported, setReported] = useState(false);
@@ -105,48 +107,65 @@ export function Unburden({
             </a>
           </div>
 
-          <div className="relative">
-            <div
-              className={`${
-                showSensitiveContent ? "blur-none select-text" : "blur-md select-none opacity-40"
-              } transition-all duration-300 w-full`}
-            >
-              <p className="whitespace-pre-wrap break-words text-sm sm:text-base leading-relaxed text-foreground/90">
+          {previewMode ? (
+            <div className="relative overflow-hidden rounded-2xl bg-secondary/40 border border-border/60 h-20 sm:h-24">
+              <p className="blur-md select-none opacity-30 line-clamp-3 text-sm sm:text-base leading-relaxed text-foreground/90 p-3">
                 {data.content}
               </p>
-            </div>
-
-            {!showSensitiveContent && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                <span className="bg-card/90 text-foreground border border-border px-4 py-2 rounded-full text-xs font-medium shadow-soft">
-                  Conteúdo sensível protegido
+              <div className="absolute inset-0 flex items-center justify-center p-3 bg-card/50 backdrop-blur-[1px]">
+                <span className="bg-card text-foreground border border-border px-3.5 py-1.5 rounded-full text-xs font-medium shadow-soft">
+                  Conteúdo sensível protegido · Toque para ler
                 </span>
               </div>
-            )}
-
-            {showSensitiveButton && (
-              <button
-                type="button"
-                onClick={handleShowSensitiveContent}
-                className="mt-3 text-xs inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground bg-secondary hover:bg-muted px-4 py-2 rounded-full border border-border/60 transition-colors relative z-10 cursor-pointer"
+            </div>
+          ) : (
+            <div className="relative">
+              <div
+                className={`${
+                  showSensitiveContent ? "blur-none select-text" : "blur-md select-none opacity-40"
+                } transition-all duration-300 w-full`}
               >
-                {showSensitiveContent ? (
-                  <>
-                    <FaEyeSlash className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Ocultar conteúdo sensível</span>
-                  </>
-                ) : (
-                  <>
-                    <FaEye className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Visualizar conteúdo sensível</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
+                <p className="whitespace-pre-wrap break-words text-sm sm:text-base leading-relaxed text-foreground/90">
+                  {data.content}
+                </p>
+              </div>
+
+              {!showSensitiveContent && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                  <span className="bg-card/90 text-foreground border border-border px-4 py-2 rounded-full text-xs font-medium shadow-soft">
+                    Conteúdo sensível protegido
+                  </span>
+                </div>
+              )}
+
+              {showSensitiveButton && (
+                <button
+                  type="button"
+                  onClick={handleShowSensitiveContent}
+                  className="mt-3 text-xs inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground bg-secondary hover:bg-muted px-4 py-2 rounded-full border border-border/60 transition-colors relative z-10 cursor-pointer"
+                >
+                  {showSensitiveContent ? (
+                    <>
+                      <FaEyeSlash className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Ocultar conteúdo sensível</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaEye className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Visualizar conteúdo sensível</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       ) : (
-        <p className="whitespace-pre-wrap break-words text-sm sm:text-base leading-relaxed text-foreground/90">
+        <p
+          className={`${
+            previewMode ? "line-clamp-3 sm:line-clamp-4" : "whitespace-pre-wrap"
+          } break-words text-sm sm:text-base leading-relaxed text-foreground/90`}
+        >
           {data.content}
         </p>
       )}
