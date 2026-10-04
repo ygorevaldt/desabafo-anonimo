@@ -39,7 +39,12 @@ export class AuditUnburdenService {
     (async () => {
       try {
         await this.audit(unburdenId);
-      } catch {}
+      } catch (error) {
+        console.error(
+          `[AuditUnburden] Erro ao auditar desabafo ${unburdenId}:`,
+          error,
+        );
+      }
     })().catch(() => {});
   }
 }

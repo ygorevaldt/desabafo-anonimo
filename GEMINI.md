@@ -16,7 +16,7 @@ As variáveis de ambiente para a IA residem no arquivo `.env`:
 
 ```env
 GEMINI_API_KEY=sua_chave_aqui
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.8-flash
 REPORT_AUDIT_THRESHOLD=3
 MODERATION_CACHE_TTL_MS=86400000
 MAX_MODERATION_CACHE_ENTRIES=5000

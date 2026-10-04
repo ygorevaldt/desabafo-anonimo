@@ -18,6 +18,7 @@ type Input = {
 
 type Output = {
   unburden: UnburdenOutput;
+  comfortPromise?: Promise<void>;
 };
 
 export class RegisterUnburdenService implements IService<Input, Output> {
@@ -50,37 +51,71 @@ export class RegisterUnburdenService implements IService<Input, Output> {
       sensitiveContent: moderation.isSensitive,
     });
 
+    let comfortPromise: Promise<void> | undefined;
+
     if (data.wantsAiComfort && this.commentRepository) {
-      this.triggerAsyncAiComfort(unburden.id, data.title, data.content);
+      comfortPromise = this.triggerAsyncAiComfort(
+        unburden.id,
+        data.title,
+        data.content,
+      );
     }
 
-    return { unburden };
+    return { unburden, comfortPromise };
   }
 
-  private triggerAsyncAiComfort(
+  private async triggerAsyncAiComfort(
     unburdenId: string,
     title: string,
     content: string,
-  ): void {
+  ): Promise<void> {
     if (!this.commentRepository) return;
 
     const commentRepository = this.commentRepository;
     const comfortService = this.comfortService;
 
-    (async () => {
+    try {
+      console.log(
+        `[AiComfort] Iniciando geração de acolhimento para o desabafo ${unburdenId}...`,
+      );
+      const comfortMessage = await comfortService.generateComfortMessage(
+        title,
+        content,
+      );
+
+      const messageToSave =
+        comfortMessage?.trim() || comfortService.fallbackComfortMessage();
+
+      await commentRepository.create({
+        unburdenId,
+        content: `${AI_COMFORT_PREFIX}${messageToSave}`,
+        sensitiveContent: false,
+      });
+
+      console.log(
+        `[AiComfort] Acolhimento gravado com sucesso para o desabafo ${unburdenId}.`,
+      );
+    } catch (error) {
+      console.error(
+        `[AiComfort] Erro ao processar acolhimento para o desabafo ${unburdenId}:`,
+        error,
+      );
       try {
-        const comfortMessage = await comfortService.generateComfortMessage(
-          title,
-          content,
+        const fallbackText = comfortService.fallbackComfortMessage();
+        await commentRepository.create({
+          unburdenId,
+          content: `${AI_COMFORT_PREFIX}${fallbackText}`,
+          sensitiveContent: false,
+        });
+        console.log(
+          `[AiComfort] Mensagem de fallback gravada com sucesso após erro para ${unburdenId}.`,
         );
-        if (comfortMessage) {
-          await commentRepository.create({
-            unburdenId,
-            content: `${AI_COMFORT_PREFIX}${comfortMessage.trim()}`,
-            sensitiveContent: false,
-          });
-        }
-      } catch {}
-    })().catch(() => {});
+      } catch (fallbackError) {
+        console.error(
+          `[AiComfort] Falha crítica ao persistir fallback para o desabafo ${unburdenId}:`,
+          fallbackError,
+        );
+      }
+    }
   }
 }

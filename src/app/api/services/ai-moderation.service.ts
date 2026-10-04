@@ -23,7 +23,7 @@ export class AiModerationService {
     if (apiKey) {
       this.ai = new GoogleGenAI({ apiKey });
     }
-    this.modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    this.modelName = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     this.cache = cache ?? moderationCache;
   }
 

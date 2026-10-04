@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 
 import { makeRegisterUnburdenService } from "@/app/api/services/factories/make-register-unburden-service";
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
@@ -14,7 +14,23 @@ export async function POST(request: NextRequest) {
     const requestBodyJson = await request.json();
     const body = registerUnburdenBodySchema.parse(requestBodyJson);
 
-    const { unburden } = await registerUnburdenService.execute(body);
+    const { unburden, comfortPromise } =
+      await registerUnburdenService.execute(body);
+
+    if (comfortPromise) {
+      try {
+        after(async () => {
+          await comfortPromise;
+        });
+      } catch {
+        comfortPromise.catch((error) => {
+          console.error(
+            "[AiComfort] Erro na execução assíncrona de acolhimento:",
+            error,
+          );
+        });
+      }
+    }
 
     return NextResponse.json(new UnburdenResponseDto(unburden), {
       status: HttpStatusCode.CREATED,

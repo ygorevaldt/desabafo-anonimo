@@ -10,7 +10,7 @@ export class AiComfortService {
     if (apiKey) {
       this.ai = new GoogleGenAI({ apiKey });
     }
-    this.modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    this.modelName = process.env.GEMINI_MODEL || "gemini-3.8-flash";
   }
 
   async generateComfortMessage(
@@ -74,12 +74,12 @@ Diretrizes:
 
       return text;
     } catch (error) {
-      console.warn("Erro ao gerar mensagem de conforto com IA:", error);
+      console.warn("[AiComfortService] Erro ao gerar mensagem de conforto com IA via Gemini API:", error);
       return this.fallbackComfortMessage();
     }
   }
 
-  private fallbackComfortMessage(): string {
+  public fallbackComfortMessage(): string {
     return (
       "Olá! Quero que saiba que suas palavras foram ouvidas com muito carinho e respeito. " +
       "Às vezes, colocar para fora o que sentimos é um passo difícil, mas muito corajoso. " +

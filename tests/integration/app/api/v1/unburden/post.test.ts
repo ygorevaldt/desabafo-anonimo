@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import * as gatewayRoute from "@/app/api/gateway/[...path]/route";
 import { testClient } from "../../utils/test-client";
 import { cleanDatabase } from "../../utils/clean-database.util";
+import { database } from "@/app/api/infra/database";
+import { AI_COMFORT_TAG } from "@/constants/ai-comfort.constant";
 
 describe("unburden", () => {
   const unburden = {
@@ -60,7 +62,7 @@ describe("unburden", () => {
     expect(response.status).toEqual(HttpStatusCode.UNAUTHORIZED);
   });
 
-  it("POST to /api/gateway/v1/unburden with wantsAiComfort should return 201 immediately without blocking", async () => {
+  it("POST to /api/gateway/v1/unburden with wantsAiComfort should return 201 immediately and persist comfort comment", async () => {
     const startTime = Date.now();
     const response = await testClient(gatewayRoute, {
       path: ["v1", "unburden"] as any,
@@ -75,5 +77,17 @@ describe("unburden", () => {
     expect(response.status).toBe(HttpStatusCode.CREATED);
     expect(response.body).toHaveProperty("id");
     expect(elapsedTime).toBeLessThan(2000);
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const comments = await database.comment.findMany({
+      where: {
+        unburdenId: response.body.id,
+      },
+    });
+
+    expect(comments).toHaveLength(1);
+    expect(comments[0].content).toContain(AI_COMFORT_TAG);
+    expect(comments[0].sensitiveContent).toBe(false);
   });
 });
