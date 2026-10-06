@@ -20,7 +20,7 @@
 
 **Purpose**: Estrutura básica e exceções de suporte
 
-- [ ] T001 [P] Criar a classe `DownstreamError` em `src/app/api/gateway/circuit-breaker/downstream-error.ts`
+- [x] T001 [P] Criar a classe `DownstreamError` em `src/app/api/gateway/circuit-breaker/downstream-error.ts`
 
 **Checkpoint**: Base foundational pronta para as histórias de usuário
 
@@ -36,12 +36,12 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation (Red)**
 
-- [ ] T002 [US1] Adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` verificando que respostas repetidas com HTTP 500 fazem o disjuntor abrir automaticamente para OPEN e falhar rápido com 503
+- [x] T002 [US1] Adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` verificando que respostas repetidas com HTTP 500 fazem o disjuntor abrir automaticamente para OPEN e falhar rápido com 503
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] Atualizar `src/app/api/gateway/[...path]/route.ts` para verificar `response.status >= HttpStatusCode.INTERNAL_SERVER_ERROR` dentro da ação do circuit breaker, lançando `DownstreamError`, e tratando o erro no catch para retornar a resposta 5xx original com cabeçalhos sanitizados enquanto o disjuntor estiver fechado
-- [ ] T004 [US1] Verificar testes da US1 passando (Green) e refatorar conforme necessário
+- [x] T003 [US1] Atualizar `src/app/api/gateway/[...path]/route.ts` para verificar `response.status >= HttpStatusCode.INTERNAL_SERVER_ERROR` dentro da ação do circuit breaker, lançando `DownstreamError`, e tratando o erro no catch para retornar a resposta 5xx original com cabeçalhos sanitizados enquanto o disjuntor estiver fechado
+- [x] T004 [US1] Verificar testes da US1 passando (Green) e refatorar conforme necessário
 
 **Checkpoint**: User Story 1 totalmente funcional e testada de forma independente
 
@@ -55,11 +55,11 @@
 
 ### Tests for User Story 2 (MANDATORY - TDD Integration Tests) ⚠️
 
-- [ ] T005 [US2] Adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` confirmando que requisições repetidas com status 400 ou 404 mantêm o disjuntor em estado `CLOSED`
+- [x] T005 [US2] Adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` confirmando que requisições repetidas com status 400 ou 404 mantêm o disjuntor em estado `CLOSED`
 
 ### Implementation for User Story 2
 
-- [ ] T006 [US2] Validar que o fluxo no gateway preserva respostas < 500 como resolvidas com sucesso e verificar testes da US2 passando (Green)
+- [x] T006 [US2] Validar que o fluxo no gateway preserva respostas < 500 como resolvidas com sucesso e verificar testes da US2 passando (Green)
 
 **Checkpoint**: User Story 2 totalmente funcional e testada de forma independente
 
@@ -73,11 +73,11 @@
 
 ### Tests for User Story 3 (MANDATORY - TDD Integration Tests) ⚠️
 
-- [ ] T007 [US3] Atualizar/adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` cobrindo o ciclo de recuperação automática com transição Half-Open e fechamento via canary request bem-sucedido
+- [x] T007 [US3] Atualizar/adicionar teste de integração em `tests/integration/app/api/gateway/circuit-breaker.test.ts` cobrindo o ciclo de recuperação automática com transição Half-Open e fechamento via canary request bem-sucedido
 
 ### Implementation for User Story 3
 
-- [ ] T008 [US3] Verificar testes da US3 passando (Green) e refatorar sem duplicidade
+- [x] T008 [US3] Verificar testes da US3 passando (Green) e refatorar sem duplicidade
 
 **Checkpoint**: Todas as histórias de usuário implementadas e validadas
 
@@ -87,8 +87,8 @@
 
 **Purpose**: Verificações finais de qualidade e conformidade
 
-- [ ] T009 Executar suíte completa de testes de integração via `npm test`
-- [ ] T010 Executar build de produção via `npm run build`
+- [x] T009 Executar suíte completa de testes de integração via `npm test`
+- [x] T010 Executar build de produção via `npm run build`
 
 ---
 
