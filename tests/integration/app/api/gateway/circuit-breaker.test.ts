@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HttpStatusCode } from "@/app/api/constants/http-status-code";
 import { testClient } from "../utils/test-client";
 import * as gatewayRoute from "@/app/api/gateway/[...path]/route";
 import { circuitBreakerRegistry } from "@/app/api/gateway/circuit-breaker/circuit-breaker-registry";
+import { database } from "@/app/api/infra/database";
 
 describe("API Gateway Circuit Breaker", () => {
   beforeEach(() => {
@@ -19,30 +20,66 @@ describe("API Gateway Circuit Breaker", () => {
     expect(breaker.opened).toBe(false);
   });
 
-  it("should trip circuit to OPEN on repeated failures and fail-fast with status 503", async () => {
+  it("should automatically trip circuit to OPEN on repeated 500 downstream responses and fail-fast with status 503", async () => {
     const breaker = circuitBreakerRegistry.get("unburden", {
       errorThresholdPercentage: 50,
       resetTimeout: 200,
       volumeThreshold: 2,
     });
 
-    breaker.open();
+    const originalFindMany = database.unburden.findMany;
+    database.unburden.findMany = vi
+      .fn()
+      .mockRejectedValue(new Error("Database connection lost"));
+
+    const firstResponse = await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    }).get("/api/gateway/v1/unburden");
+    expect(firstResponse.status).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+    const secondResponse = await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    }).get("/api/gateway/v1/unburden");
+    expect(secondResponse.status).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
+
     expect(breaker.opened).toBe(true);
 
     const startTime = Date.now();
-    const response = await testClient(gatewayRoute, {
+    const thirdResponse = await testClient(gatewayRoute, {
       path: ["v1", "unburden"] as any,
     }).get("/api/gateway/v1/unburden");
     const duration = Date.now() - startTime;
 
-    expect(response.status).toBe(HttpStatusCode.SERVICE_UNAVAILABLE);
-    expect(response.body).toEqual({
+    expect(thirdResponse.status).toBe(HttpStatusCode.SERVICE_UNAVAILABLE);
+    expect(thirdResponse.body).toEqual({
       message:
         "O serviço está temporariamente indisponível para estabilização. Por favor, tente novamente em alguns instantes.",
       code: "CIRCUIT_BREAKER_OPEN",
     });
-    expect(response.headers).toHaveProperty("retry-after", "10");
+    expect(thirdResponse.headers).toHaveProperty("retry-after", "10");
     expect(duration).toBeLessThan(100);
+
+    database.unburden.findMany = originalFindMany;
+  });
+
+  it("should keep circuit CLOSED when downstream returns 4xx client errors", async () => {
+    const breaker = circuitBreakerRegistry.get("unburden", {
+      errorThresholdPercentage: 50,
+      resetTimeout: 200,
+      volumeThreshold: 2,
+    });
+
+    for (let i = 0; i < 4; i++) {
+      const response = await testClient(gatewayRoute, {
+        path: ["v1", "unburden"] as any,
+      })
+        .post("/api/gateway/v1/unburden")
+        .send({});
+
+      expect(response.status).toBe(HttpStatusCode.BAD_REQUEST);
+    }
+
+    expect(breaker.opened).toBe(false);
   });
 
   it("should isolate circuits between different domains", async () => {
@@ -76,6 +113,39 @@ describe("API Gateway Circuit Breaker", () => {
     }).get("/api/gateway/v1/status");
 
     expect(response.status).toBe(HttpStatusCode.OK);
+    expect(breaker.opened).toBe(false);
+  });
+
+  it("should automatically recover to CLOSED after resetTimeout and a successful canary request following 500 errors", async () => {
+    const breaker = circuitBreakerRegistry.get("unburden", {
+      errorThresholdPercentage: 50,
+      resetTimeout: 100,
+      volumeThreshold: 2,
+    });
+
+    const originalFindMany = database.unburden.findMany;
+    database.unburden.findMany = vi
+      .fn()
+      .mockRejectedValue(new Error("Transient database failure"));
+
+    await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    }).get("/api/gateway/v1/unburden");
+
+    await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    }).get("/api/gateway/v1/unburden");
+
+    expect(breaker.opened).toBe(true);
+    database.unburden.findMany = originalFindMany;
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const canaryResponse = await testClient(gatewayRoute, {
+      path: ["v1", "unburden"] as any,
+    }).get("/api/gateway/v1/unburden");
+
+    expect(canaryResponse.status).toBe(HttpStatusCode.OK);
     expect(breaker.opened).toBe(false);
   });
 });

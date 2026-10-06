@@ -6,6 +6,7 @@ import { handleGatewayError } from "../utils/handle-gateway-error.util";
 import { extractClientIp } from "../utils/extract-client-ip.util";
 import { rateLimiter } from "../rate-limit/rate-limiter";
 import { circuitBreakerRegistry } from "../circuit-breaker/circuit-breaker-registry";
+import { DownstreamError } from "../circuit-breaker/downstream-error";
 import { RateLimitResult } from "../rate-limit/rate-limit.types";
 
 type RouteContext = {
@@ -46,10 +47,12 @@ async function handleGatewayRequest(
   request: NextRequest,
   context?: RouteContext,
 ): Promise<NextResponse> {
+  let rateLimitResult: RateLimitResult | undefined;
+
   try {
     const clientIp = extractClientIp(request);
     const isMutative = GatewayDispatcher.isMutative(request.method);
-    const rateLimitResult = rateLimiter.check(clientIp, isMutative);
+    rateLimitResult = rateLimiter.check(clientIp, isMutative);
 
     if (!rateLimitResult.allowed) {
       const headers = sanitizeResponseHeaders(undefined, {
@@ -77,7 +80,13 @@ async function handleGatewayRequest(
 
     const downstreamResponse = await circuitBreakerRegistry.execute(
       domain,
-      () => dispatcher.dispatch(pathParts, request),
+      async () => {
+        const response = await dispatcher.dispatch(pathParts, request);
+        if (response.status >= HttpStatusCode.INTERNAL_SERVER_ERROR) {
+          throw new DownstreamError(response);
+        }
+        return response;
+      },
     );
 
     const sanitizedHeaders = sanitizeResponseHeaders(
@@ -91,6 +100,22 @@ async function handleGatewayRequest(
       headers: sanitizedHeaders,
     });
   } catch (error) {
+    if (error instanceof DownstreamError) {
+      const extraHeaders = rateLimitResult
+        ? buildRateLimitHeaders(rateLimitResult)
+        : undefined;
+      const sanitizedHeaders = sanitizeResponseHeaders(
+        error.response.headers,
+        extraHeaders,
+      );
+
+      return new NextResponse(error.response.body, {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        headers: sanitizedHeaders,
+      });
+    }
+
     return handleGatewayError(error);
   }
 }
